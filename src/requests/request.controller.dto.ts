@@ -69,22 +69,14 @@ export class RequestController {
     ){
         return this.reqService.getAllTraderRequests(query,user);
     };
-    @Get("user")
+    @Get()
     @UseGuards(Protected,allowedToGuard)
-    @Roles(userType.user)
-    getUserReqs(
+    @Roles(userType.admin,userType.user)
+    getRequests(
         @Query() query:QueryRequestDto,
         @AuthUser() user:UserDoc
     ){
-        return this.reqService.getAllUserRequests(query,user);
-    };
-    @Get()
-    @UseGuards(Protected,allowedToGuard)
-    @Roles(userType.admin)
-    getRequests(
-        @Query() query:QueryRequestDto
-    ){
-        return this.reqService.getAllRequests(query);
+        return this.reqService.getAllRequests(query,user);
     };
     @Get(":reqId")
     @UseGuards(Protected)

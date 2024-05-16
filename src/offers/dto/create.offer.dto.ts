@@ -14,6 +14,9 @@ export class CreateOfferDto {
     @IsNumber()
     price:number;
     @IsOptional()
+    @IsMongoId()
+    trader:mongodbId;
+    @IsOptional()
     @IsString()
     image:string;
     @IsNotEmpty()

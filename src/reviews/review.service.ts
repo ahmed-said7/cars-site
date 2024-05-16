@@ -10,7 +10,6 @@ import { UpdateReviewDto } from "./dto/update.review.dto";
 import { mongodbId } from "src/chat/chat.service";
 import { QueryReviewDto } from "./dto/query.review.dto";
 import { CrudService } from "src/filter/crud.service";
-import { userType } from "src/enums/user.type";
 
 
 
@@ -65,8 +64,8 @@ export class ReviewService {
         if(!review){
             throw new HttpException("No review found",400);
         }
-        if( review.user.toString() != user._id.toString() && user.role != userType.admin ){
-            throw new HttpException("you are not allowed to edit this spare",400);
+        if( review.user.toString() != user._id.toString()  ){
+            throw new HttpException("you are not allowed to edit this review",400);
         };
         return review;
     };
@@ -85,7 +84,7 @@ export class ReviewService {
                 this.reviewModel.find(),
                 query,
                 undefined,
-                [{path:"user",select:"name image"},{path:"review",select:"name image"}]
+                [ {path:"user",select:"name image"} , {path:"review",select:"name image"} ]
             );
     };
     private async aggregation(userId:mongodbId){

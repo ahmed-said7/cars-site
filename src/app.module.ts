@@ -17,6 +17,8 @@ import { SpareModule } from './spare parts/spare.module';
 import { APP_FILTER } from '@nestjs/core';
 import { catchExceptionsFilter } from './errorHandler/base.filter';
 import { RequestModule } from './requests/request.module.dto';
+import { OfferModule } from './offers/offer.module';
+import { PaytabModule } from './payment gateway/paytab.module';
 
 
 @Module({
@@ -38,7 +40,7 @@ import { RequestModule } from './requests/request.module.dto';
     OwnCarsModule,
     AddresseModule,
     ReviewModule,SpareModule
-    ,RequestModule
+    ,RequestModule,OfferModule,PaytabModule
   ],
   controllers: [],
   providers: [{provide:APP_FILTER,useClass:catchExceptionsFilter}]

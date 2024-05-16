@@ -6,11 +6,10 @@ import { ConfigModule } from "@nestjs/config";
 import { CarBrandSchema } from "./car.brand.schema";
 import { CarModelSchema } from "./car.model.schema";
 import { OwnCarsSchema } from "./user.cars.schema";
-import { MongooseModule } from "@nestjs/mongoose";
-import { Models } from "src/enums/models";
 import { ReviewSchema } from "./review.schema";
 import { SpareSchema } from "./spare.schema";
 import { RequestSchema } from "./request.schema";
+import { OfferSchema } from "./offer.schema";
 
 
 
@@ -19,12 +18,14 @@ import { RequestSchema } from "./request.schema";
         ConfigModule.forRoot()
     ],
     providers:[
+        OfferSchema,
         UserSchema,ChatSchema,MessageSchema,CarBrandSchema,
         CarModelSchema,OwnCarsSchema,ReviewSchema,SpareSchema,RequestSchema
     ],
     exports:[
         UserSchema,ChatSchema,MessageSchema,CarBrandSchema,CarModelSchema,
-        OwnCarsSchema,ReviewSchema,SpareSchema,RequestSchema
+        OwnCarsSchema,ReviewSchema,SpareSchema,RequestSchema,
+        OfferSchema
     ]
 })
 

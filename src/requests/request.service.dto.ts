@@ -13,6 +13,7 @@ import { CreateRequestDto } from "./dto/create.request.dto";
 import { QueryRequestDto } from "./dto/query.request.dto";
 import { RequestDoc } from "src/schema.factory/request.schema";
 import { UpdateRequestDto } from "./dto/update.request.dto";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
 
 
@@ -22,7 +23,8 @@ export class RequestService {
         @InjectModel(Models.Request) private requestModel:Model<RequestDoc>,
         @InjectModel(Models.CarModel) private CarBrandModel:Model<ModelDoc>,
         @InjectModel(Models.Brand) private BrandModel:Model<BrandDoc>,
-        private crudSrv:CrudService<SpareDoc,QueryRequestDto>
+        private crudSrv:CrudService<SpareDoc,QueryRequestDto>,
+        private events:EventEmitter2
     ){};
     async createRequest(body:CreateRequestDto,user:UserDoc){
         await this.validateCarmodelBrand(body.carmodel,body.brand)
@@ -49,7 +51,7 @@ export class RequestService {
         if(!request){
             throw new HttpException("No request found",400);
         };
-        if( request.user.toString() != user._id.toString() && user.role != userType.admin ){
+        if( request.user.toString() != user._id.toString()  ){
             throw new HttpException("you are not allowed to edit this request",400);
         };
         return request;
@@ -69,6 +71,7 @@ export class RequestService {
     async deleteRequest( reqId:mongodbId,user:UserDoc ){
         const request=await this.accessRequest(reqId,user);
         await request.deleteOne();
+        this.events.emit("request.deleteOne",request);
         return { status : "deleted"  };
     };
     async getRequest( reqId:mongodbId,user:UserDoc ){
@@ -76,7 +79,7 @@ export class RequestService {
         if(!request){
             throw new HttpException("request not found",400);
         };
-        if( request.user.toString() != user._id && user.role == "user"  ){
+        if( request.user.toString() != user._id.toString() && user.role == "user"  ){
             throw new HttpException("you are not request owner",400);
         };
         const brandIds=user.tradingBrand.map( ( brand ) => brand._id.toString() );
@@ -86,20 +89,10 @@ export class RequestService {
         request=await request.populate([
             {path:"brand",select:"name image"},
             {path:"carmodel",select:"name"},
-            {path:"user",select:"name image"}]);
+            {path:"user",select:"name image"}
+        ]);
         return { request };
     };
-    async getAllRequests(query:QueryRequestDto){
-        return this.crudSrv.getAllDocs(
-            this.requestModel.find(),query,
-            undefined,
-            [   
-                { path:"brand",select:"name image"} , 
-                {path:"carmodel",select:"name"} , 
-                {path:"user",select:"name image"} 
-            ]
-        )
-    }
     async getAllTraderRequests(query:QueryRequestDto,user:UserDoc){
         return this.crudSrv.getAllDocs( this.requestModel.find() ,query ,
             { 
@@ -116,11 +109,13 @@ export class RequestService {
             ]
         );
     };
-    async getAllUserRequests(query:QueryRequestDto,user:UserDoc){
+    async getAllRequests(query:QueryRequestDto,user:UserDoc){
+        let obj={};
+        if( user.role == "user" ){
+            obj = { user : user._id };
+        };
         return this.crudSrv.getAllDocs( this.requestModel.find() ,query ,
-            { 
-                user: user._id
-            },
+            obj,
             [   
                 {path:"brand",select:"name image"}, 
                 {path:"carmodel",select:"name"}, 

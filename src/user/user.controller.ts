@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Res, UseGuards, UseInterceptors } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { LoginUserDto } from "./dto/login.dto";
 import { SignupUserAdminDto } from "./dto/signup.dto";
@@ -13,6 +13,7 @@ import { FileInterceptorImage } from "src/interceptor/file.interceptor";
 import { mongodbId } from "src/chat/chat.service";
 import { Roles } from "src/decorator/metadata";
 import { userType } from "src/enums/user.type";
+import { Response } from "express";
 
 
 @Controller("user")

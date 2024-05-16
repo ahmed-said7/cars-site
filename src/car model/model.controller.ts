@@ -41,7 +41,6 @@ export class BrandModelController {
         return this.modelService.deleteModel(modelId);
     };
     @Get("brand/:brandId")
-    @UseGuards(Protected)
     getBrandModels(
         @Param("brandId",ParseMongoId) brandId:mongodbId
     ){

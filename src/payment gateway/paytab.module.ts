@@ -2,13 +2,13 @@ import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { Models } from "src/enums/models";
 import { ApiModule } from "src/filter/api.module";
+import { OfferSchema } from "src/schema.factory/offer.schema";
 import { RequestSchema } from "src/schema.factory/request.schema";
 import { SchemaFactoryModule } from "src/schema.factory/schema.module";
 import { UserSchema } from "src/schema.factory/user.schema";
-import { OfferSchema } from "src/schema.factory/offer.schema";
-import { OfferService } from "./offer.service";
-import { OfferController } from "./offer.controller";
-
+import { Paytab } from "./paytabs";
+import { PaytabService } from "./paytab.service";
+import { PaytabController } from "./paytab.controller";
 
 
 @Module({
@@ -20,8 +20,8 @@ import { OfferController } from "./offer.controller";
                 imports:[SchemaFactoryModule],
                 inject:[OfferSchema],
                 name:Models.Offer,
-                useFactory:function(OfferSchema:OfferSchema){
-                    return OfferSchema.schema;
+                useFactory:function(offerSchema:OfferSchema){
+                    return offerSchema.schema;
                 }
             },
             {
@@ -42,7 +42,7 @@ import { OfferController } from "./offer.controller";
             }
         ])
     ],
-    controllers : [OfferController],
-    providers : [{provide:"folder",useValue:"offer"},OfferService]
+    controllers : [PaytabController],
+    providers : [Paytab,PaytabService]
 })
-export class OfferModule {};
+export class PaytabModule {};

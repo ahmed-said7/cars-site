@@ -52,9 +52,12 @@ export class SpareService {
             throw new HttpException("you are not allowed to edit this spare",400);
         };
         return spare;
-    }
+    };
     async updateSpare(body:UpdateSpareDto,spareId:mongodbId,user:UserDoc){
         let spare=await this.accessSpare(spareId,user);
+        if( spare.user.toString() != user._id.toString() ){
+            throw new HttpException("you are not allowed to update this spare",400);
+        };
         if(body.carmodel && body.brand){
             await this.validateCarmodelBrand(body.carmodel,body.brand);
         }else if( body.carmodel ){
@@ -62,7 +65,7 @@ export class SpareService {
         }else if( body.brand ){
             await this.validateCarmodelBrand(spare.carmodel,body.brand);
         };
-        spare = await this.SpareModel.findByIdAndUpdate( spareId , body , {new:true} );
+        spare = await this.SpareModel.findByIdAndUpdate( spareId , body , { new:true } );
         return { spare };
     };
     async deleteSpare( spareId:mongodbId,user:UserDoc ){
@@ -72,8 +75,8 @@ export class SpareService {
     };
     async getSpare( spareId:mongodbId ){
         const spare=await this.SpareModel.findById(spareId).
-            populate(["brand","carmodel",{path:"user",select:"name image"}]);
-        if(!spare){
+            populate([ "brand" , "carmodel" , {path:"user",select:"name image"} ]);
+        if( ! spare ){
             throw new HttpException("spare not found",400);
         };
         return { spare };

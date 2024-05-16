@@ -46,7 +46,7 @@ import { PaytabModule } from './payment gateway/paytab.module';
     // AddresseModule,
     // ReviewModule,
     // SpareModule
-    ,RequestModule
+    RequestModule
     ,OfferModule,PaytabModule
   ],
   controllers: [],

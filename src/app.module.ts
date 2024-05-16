@@ -33,14 +33,21 @@ import { PaytabModule } from './payment gateway/paytab.module';
       imports:[ConfigModule]
     }),
     SchemaFactoryModule,
-    UserModule,ChatModule,
-    MessageModule,
-    ApiModule,SocketModule,BrandModule,
+    UserModule
+    // ,ChatModule,
+    // MessageModule
+    ,
+    ApiModule
+    // ,SocketModule
+    ,
+    BrandModule,
     BrandModelModule,
-    OwnCarsModule,
-    AddresseModule,
-    ReviewModule,SpareModule
-    ,RequestModule,OfferModule,PaytabModule
+    // OwnCarsModule,
+    // AddresseModule,
+    // ReviewModule,
+    // SpareModule
+    ,RequestModule
+    ,OfferModule,PaytabModule
   ],
   controllers: [],
   providers: [{provide:APP_FILTER,useClass:catchExceptionsFilter}]

@@ -10,6 +10,7 @@ import { ReviewSchema } from "./review.schema";
 import { SpareSchema } from "./spare.schema";
 import { RequestSchema } from "./request.schema";
 import { OfferSchema } from "./offer.schema";
+import { OrderSchema } from "./order.schema";
 
 
 
@@ -20,12 +21,13 @@ import { OfferSchema } from "./offer.schema";
     providers:[
         OfferSchema,
         UserSchema,ChatSchema,MessageSchema,CarBrandSchema,
-        CarModelSchema,OwnCarsSchema,ReviewSchema,SpareSchema,RequestSchema
+        CarModelSchema,OwnCarsSchema,ReviewSchema,SpareSchema,RequestSchema,
+        OrderSchema
     ],
     exports:[
         UserSchema,ChatSchema,MessageSchema,CarBrandSchema,CarModelSchema,
         OwnCarsSchema,ReviewSchema,SpareSchema,RequestSchema,
-        OfferSchema
+        OfferSchema,OrderSchema
     ]
 })
 

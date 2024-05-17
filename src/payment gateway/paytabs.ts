@@ -66,28 +66,29 @@ export class Paytab {
     };
     async ValidatePayment(req:Request){
         if(req.body.tranRef){
+            const profileId = process.env.profileId; 
+            const tranRef = req.body.tranRef;
+            const serverKey = process.env.serverkey;
+            const paytaburl=process.env.paytaburl+"/payment/query";
+            console.log(paytaburl);
             const data = {
-                profile_id: process.env.profileId,
-                tran_ref: req.body.tranRef
+                profile_id: profileId,
+                tran_ref: tranRef
             };
-            const config = {
-                method: 'post',
-                url: `${process.env.paytaburl}/payment/query`,
+            const config = { method: 'post',
+                url: 'https://secure-egypt.paytabs.com/payment/query',
                 headers: {
-                    Authorization: process.env.serverkey,
-                    'Content-Type': 'application/json',
-                }, data
-            };
-            try{
-                const res=await axios(config);
+                    Authorization: serverKey, 
+                    'Content-Type': 'application/json'
+            },data };
+            axios(config).then((res) => {
                 const data=res.data;
                 if( data?.payment_result?.response_status && data?.payment_result?.response_status == "A" ){
                     this.events.emit("payment.created",data);
                 };
-            }catch(err){
-                console.log("paymentFailed");
-                // throw new HttpException("paymentFailed", 400);
-            };
+            }).catch((error) => {
+                console.error('Payment query failed:', error);
+            });
         };
     }
 };

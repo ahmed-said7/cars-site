@@ -11,6 +11,6 @@ async function bootstrap() {
     {whitelist:true}
   ));
   app.useStaticAssets("src/uploads");
-  await app.listen(4000);
+  await app.listen(6000);
 }
 bootstrap();

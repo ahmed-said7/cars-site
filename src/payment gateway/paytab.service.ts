@@ -37,5 +37,7 @@ export class PaytabService {
             { ... body , price:offer.price , requestId:offer.request  }
         )
     };
-    async validateResponse(req:Request){};
+    async validateCallback(req:Request){
+        this.paytab.ValidatePayment(req);
+    };
 };

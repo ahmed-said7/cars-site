@@ -1,9 +1,9 @@
-import { Injectable } from "@nestjs/common";
+import { HttpException, Injectable } from "@nestjs/common";
 import { Request, Response } from "express";
 import * as paytabs from "paytabs_pt2";
 import { mongodbId } from "src/chat/chat.service";
 import { UserDoc } from "src/schema.factory/user.schema";
-
+import axios  from "axios";
 interface metadata {
     phone: string;
     street: string;
@@ -48,8 +48,8 @@ export class Paytab {
         ];
         let shipping_address = customer_details;
         let response_URLs = [
-            process.env.callback,
-            process.env.response
+            process.env.response,
+            process.env.callback
             
         ];
         let lang = "ar";
@@ -70,32 +70,29 @@ export class Paytab {
         );
     };
     async ValidatePayment(req:Request){
-        console.log(req.query);
-        if(req.query.tranRef){
-            const res=await 
-                fetch('https://merchant-egypt.paytabs.com/payment/query'
-                ,{
-                    method: 'POST',
-                    headers:{
-                        'Authorization':"S9J99ZWKLN-JJ6J66WLTL-ZZRHJTG2GL",
-                        'Content-Type':"application/json"
-                    },
-                    body:JSON.stringify({ 
-                        'profile_id':"137405",
-                        'tran_ref':req.query.tranRef
-                    })
-                });
-            console.log(res.ok);
-            if(!res.ok){
-                return false;
-            }
-            const data=await res.json();
-            console.log(data);
-            if( data?.payment_result?.response_status && data?.payment_result?.response_status == "A" ){
-                console.log("paymentSucceded");
-                return true;
-            }
+        if(req.body.tranRef){
+            const data = {
+                profile_id: "137405",
+                tran_ref: req.body.tranRef
+            };
+            const config = {
+                method: 'post',
+                url: 'https://secure-egypt.paytabs.com/payment/query',
+                headers: {
+                    Authorization: `S9J99ZWKLN-JJ6J66WLTL-ZZRHJTG2GL`,
+                    'Content-Type': 'application/json',
+                }, data
+            };
+            try{
+                const res=await axios(config);
+                const data=res.data;
+                if( data?.payment_result?.response_status && data?.payment_result?.response_status == "A" ){
+                    console.log(`okkkkkkkkkkkkkkkk`);
+                };
+            }catch(err){
+                console.log("paymentFailed");
+                throw new HttpException("paymentFailed", 400);
+            };
         };
-        return false;
     }
 };

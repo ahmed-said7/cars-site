@@ -18,6 +18,17 @@ export class PaytabController {
     constructor(
         private paytabService:PaytabService
     ){};
+    
+    @Post()
+    validateRequest(
+        @Req() request:Request 
+    ){
+        return this.paytabService.validateCallback(request);
+    };
+    @Post("response")
+    async getResponsePayment(){
+        return { status:"paid" }
+    };
     @Post(":offerId")
     @UseGuards(Protected,allowedToGuard)
     @Roles(userType.user)
@@ -28,11 +39,5 @@ export class PaytabController {
         @Param("offerId",ParseMongoId) offerId:mongodbId
     ){
         return this.paytabService.getPaytabUrl(res,body,offerId,user);
-    };
-    @Post()
-    validateRequest(
-        @Req() request:Request 
-    ){
-        console.log(request.query);
     };
 };

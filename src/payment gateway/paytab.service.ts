@@ -31,10 +31,10 @@ export class PaytabService {
         if( request.user.toString() != user._id.toString() ){
             throw new HttpException("you are not request owner",400);
         };
-        if( request.completed == true ){
-            throw new HttpException("your request has been paid",400);
-        };
-        return this.paytab.getPaymentUrl(
+        // if( request.completed == true ){
+        //     throw new HttpException("your request has been paid",400);
+        // };
+        return this.paytab.paymentUrlUsingAxios(
             res,user,
             {  price:offer.price , offerId:offer._id  }
         )

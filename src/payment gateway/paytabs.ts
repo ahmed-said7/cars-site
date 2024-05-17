@@ -1,6 +1,5 @@
 import { HttpException, Injectable } from "@nestjs/common";
 import { Request, Response } from "express";
-import * as paytabs from "paytabs_pt2";
 import { mongodbId } from "src/chat/chat.service";
 import { UserDoc } from "src/schema.factory/user.schema";
 import axios  from "axios";
@@ -10,64 +9,44 @@ interface metadata {
     price: number;
 };
 
-
 @Injectable()
 export class Paytab {
-
     constructor(private events:EventEmitter2){};
-    async getPaymentUrl(res:Response,user:UserDoc,meta:metadata){
-        let profileID = process.env.profileId;
-        let serverKey = process.env.serverkey;
-        let region = process.env.region;
-        paytabs.setConfig( profileID, serverKey, region);
-        let paymentMethods = ["all"];
-        let transaction_details = [
-            "sale", // transaction type
-            "ecom" // transaction class
-        ];
-        let cart_details = [
-            meta.offerId,//cart.id
-            process.env.currency, //cart.currency,
-            meta.price,//cart.amount,
-            "buy mechanical parts",//cart.description
-        ];
-        let customer_details = [
-            user?.name,//customer.name,
-            user?.email,// customer.email,
-            //meta?.phone,// customer.phone,
-            //meta?.street,// customer.street,
-            //meta?.city,// customer.city,
-            //meta?.state,//customer.state,
-            //meta?.country || "saudi arabia",// customer.country,
-            //meta?.zip,// "000000"// customer.zip,
-            //meta?.ip// "127.0.0.1",// customer.IP
-        ];
-        let shipping_address = customer_details;
-        let response_URLs = [
-            process.env.response,
-            process.env.callback
-        ];
-        let lang = "ar";
-        let paymentPageCreated = function (results) {
-            res.status(200).json({ url:results.redirect_url });
+    async paymentUrlUsingAxios(res:Response,user:UserDoc,meta:metadata){
+        const profileId = process.env.profileId; 
+        const serverKey = process.env.serverkey;
+        const data = {
+            profile_id: profileId,
+            tran_type: "sale",
+            tran_class: "ecom",
+            cart_id: meta.offerId,
+            cart_description: "buy mechanical parts",
+            cart_currency: process.env.currency,
+            cart_amount: meta.price,
+            callback: process.env.callback,
+            return: process.env.response,
+            customer_details : {
+                name:user?.name,
+                email:user?.email
+            }
         };
-        let frameMode = true;
-        paytabs.createPaymentPage(
-            paymentMethods,
-            transaction_details,
-            cart_details,
-            customer_details,
-            shipping_address,
-            response_URLs,
-            lang,
-            paymentPageCreated,
-            frameMode 
-        );
+        const headers = {
+            'Authorization': serverKey,
+            'Content-Type': 'application/json'
+        };
+        axios.post('https://secure-egypt.paytabs.com/payment/request', data, { headers })
+            .then(response => {
+                res.status(200).json({ data: response.data.redirect_url })
+            })
+            .catch(error => {
+                throw new HttpException("creating payment url error",400);
+            //    console.error(error); // Handle errors during the request
+            });
     };
     async ValidatePayment(req:Request){
-        if(req.body.tranRef){
+        if(req.body.tran_ref){
             const profileId = process.env.profileId; 
-            const tranRef = req.body.tranRef;
+            const tranRef = req.body.tran_ref;
             const serverKey = process.env.serverkey;
             const paytaburl=process.env.paytaburl+"/payment/query";
             console.log(paytaburl);

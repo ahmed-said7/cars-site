@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Response } from "express";
+import { Request, Response } from "express";
 import * as paytabs from "paytabs_pt2";
 import { mongodbId } from "src/chat/chat.service";
 import { UserDoc } from "src/schema.factory/user.schema";
@@ -48,8 +48,9 @@ export class Paytab {
         ];
         let shipping_address = customer_details;
         let response_URLs = [
-            process.env.response,//url.response,
-            process.env.callback//url.callback
+            process.env.callback,
+            process.env.response
+            
         ];
         let lang = "ar";
         let paymentPageCreated = function (results) {
@@ -68,4 +69,33 @@ export class Paytab {
             frameMode 
         );
     };
+    async ValidatePayment(req:Request){
+        console.log(req.query);
+        if(req.query.tranRef){
+            const res=await 
+                fetch('https://merchant-egypt.paytabs.com/payment/query'
+                ,{
+                    method: 'POST',
+                    headers:{
+                        'Authorization':"S9J99ZWKLN-JJ6J66WLTL-ZZRHJTG2GL",
+                        'Content-Type':"application/json"
+                    },
+                    body:JSON.stringify({ 
+                        'profile_id':"137405",
+                        'tran_ref':req.query.tranRef
+                    })
+                });
+            console.log(res.ok);
+            if(!res.ok){
+                return false;
+            }
+            const data=await res.json();
+            console.log(data);
+            if( data?.payment_result?.response_status && data?.payment_result?.response_status == "A" ){
+                console.log("paymentSucceded");
+                return true;
+            }
+        };
+        return false;
+    }
 };

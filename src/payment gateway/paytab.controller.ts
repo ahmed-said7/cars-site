@@ -33,11 +33,10 @@ export class PaytabController {
     @UseGuards(Protected,allowedToGuard)
     @Roles(userType.user)
     createRequest(
-        @Body() body:CreatePaytabUrlDto,
         @AuthUser() user:UserDoc,
         @Res() res:Response,
         @Param("offerId",ParseMongoId) offerId:mongodbId
     ){
-        return this.paytabService.getPaytabUrl(res,body,offerId,user);
+        return this.paytabService.getPaytabUrl(res,offerId,user);
     };
 };

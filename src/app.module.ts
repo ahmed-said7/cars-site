@@ -19,6 +19,7 @@ import { catchExceptionsFilter } from './errorHandler/base.filter';
 import { RequestModule } from './requests/request.module.dto';
 import { OfferModule } from './offers/offer.module';
 import { PaytabModule } from './payment gateway/paytab.module';
+import { OrderModule } from './order/order.module';
 
 
 @Module({
@@ -32,20 +33,21 @@ import { PaytabModule } from './payment gateway/paytab.module';
       },
       imports:[ConfigModule]
     }),
+    OrderModule,
     SchemaFactoryModule,
     UserModule
-    // ,ChatModule,
-    // MessageModule
+    ,ChatModule,
+    MessageModule
     ,
     ApiModule
-    // ,SocketModule
+    ,SocketModule
     ,
     BrandModule,
     BrandModelModule,
-    // OwnCarsModule,
-    // AddresseModule,
-    // ReviewModule,
-    // SpareModule
+    OwnCarsModule,
+    AddresseModule,
+    ReviewModule,
+    SpareModule,
     RequestModule
     ,OfferModule,PaytabModule
   ],

@@ -18,6 +18,7 @@ export class OrderSchema {
         requestImage:String,
         offerImage:String,
         details:String,
+        name:String,
         user : {
             type:Schema.Types.ObjectId,
             ref:Models.User
@@ -26,12 +27,11 @@ export class OrderSchema {
             type:Schema.Types.ObjectId,
             ref:Models.User
         },
+        
         price:Number,
         status: { type:String , enum:["new","used"] },
-        paid:{ type:Boolean , default:false },
         delivered:{ type:Boolean , default:false },
         deliveredAt:Date,
-        paidAt:Date,
         address:{
             postalCode:Number,
             details:String,
@@ -47,26 +47,23 @@ export class OrderSchema {
             if(this.requestImage){
                 this.requestImage=`${process.env.url}/request/${this.requestImage}`;
             }
+            if(this.offerImage){
+                this.offerImage=`${process.env.url}/offer/${this.offerImage}`;
+            }
         });
         this.schema.post("save",function(){
             if(this.requestImage){
                 this.requestImage=`${process.env.url}/request/${this.requestImage}`;
             }
-        });
-        this.schema.post("init",function(){
             if(this.offerImage){
-                this.offerImage=`${process.env.url}/request/${this.offerImage}`;
-            }
-        });
-        this.schema.post("save",function(){
-            if(this.offerImage){
-                this.offerImage=`${process.env.url}/request/${this.offerImage}`;
+                this.offerImage=`${process.env.url}/offer/${this.offerImage}`;
             }
         });
     };
 };
 
 export interface OrderDoc extends Document {
+    name: string;
     carmodel:mongodbId;
     brand:mongodbId;
     user:mongodbId;
@@ -77,10 +74,8 @@ export interface OrderDoc extends Document {
     details:string;
     status:string;
     price:number;
-    paid:boolean;
     delivered:boolean;
     deliveredAt:Date;
-    paidAt:Date;
     address:{
         postalCode:number,
         details:string,

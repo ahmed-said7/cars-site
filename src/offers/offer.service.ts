@@ -26,6 +26,9 @@ export class OfferService {
         if( !request ){
             throw new HttpException("request not found",400);
         };
+        if( request.completed ){
+            throw new HttpException("request completed",400);
+        }
         if( request.status !== user.tradingType ){
             throw new HttpException("user trading type should be" + request.status  ,400);
         };

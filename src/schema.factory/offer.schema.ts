@@ -19,7 +19,9 @@ export class OfferSchema {
         },
         userAccepted : { type:Boolean , default:false } ,
         userRejected : { type:Boolean , default:false } ,
-        traderAccepted : { type:Boolean , default:false }
+        traderAccepted : { type:Boolean , default:false },
+        isPaid:Boolean,
+        paidAt:Date
     },{
         timestamps:true
     });
@@ -46,4 +48,6 @@ export interface OfferDoc extends Document {
     userAccepted:boolean;
     traderAccepted:boolean;
     userRejected:boolean;
+    isPaid:boolean;
+    paidAt:Date;
 };

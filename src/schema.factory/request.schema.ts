@@ -23,6 +23,10 @@ export class RequestSchema {
             type:Schema.Types.ObjectId,
             ref:Models.User
         },
+        paidOffer: {
+            type:Schema.Types.ObjectId,
+            ref:Models.Offer
+        },
         completed:{ type:Boolean , default:false }
     },{
         timestamps:true
@@ -45,6 +49,7 @@ export interface RequestDoc extends Document {
     carmodel : mongodbId;
     brand: mongodbId;
     user: mongodbId;
+    paidOffer:mongodbId;
     year:number;
     image:string;
     status:string;

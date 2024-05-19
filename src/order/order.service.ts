@@ -14,8 +14,10 @@ export class OrderService {
         @InjectModel(Models.Order) private orderModel:Model<OrderDoc>,
         private crudSrv:CrudService<OrderDoc,QueryOrderDto>
     ){};
+
+
     async userDeliveredOrder(orderId:mongodbId,user:UserDoc){
-        const order=await this.orderModel.findOne(
+        let order=await this.orderModel.findOne(
             { _id:orderId , trader:user._id }
         );
         if(!order){
@@ -26,11 +28,12 @@ export class OrderService {
         await order.save();
         return { status: "order updated to be delivered" };
     };
+
     async deleteOrder(orderId:mongodbId){
         const order=await this.orderModel.findByIdAndDelete(orderId);
         if(!order){
             throw new HttpException("Order not found",400);
-        }
+        };
         return { status:"order deleted" };
     };
     async getOneOrder( orderId:mongodbId , user:UserDoc){
@@ -46,13 +49,12 @@ export class OrderService {
         if(user.role == "user" && user._id.toString() != order.user.toString() ){
             throw new HttpException("you are not order user",400);
         };
-        order=await order
-        .populate([
+        order=await order.populate([
             { path:"carmodel" },{ path:"brand" } 
             , { path:"trader" , select:"name image" } ,
             { path:"user" , select:"name image" }
-        ])
-        return {order};
+        ]);
+        return { order };
     };
     async getOrders(query:QueryOrderDto,user:UserDoc){
         let obj={};

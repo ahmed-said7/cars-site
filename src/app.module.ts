@@ -40,8 +40,7 @@ import { OrderModule } from './order/order.module';
     MessageModule
     ,
     ApiModule
-    ,SocketModule
-    ,
+    ,SocketModule,
     BrandModule,
     BrandModelModule,
     OwnCarsModule,

@@ -18,11 +18,11 @@ export class QueryOrderDto {
     @IsMongoId()
     trader:mongodbId;
     @IsOptional()
-    year:number | ComparisonOptions;
+    year:string | ComparisonOptions;
     @IsOptional()
     status:string;
     @IsOptional()
-    price:number | ComparisonOptions;
+    price:string | ComparisonOptions;
     @IsOptional()
     delivered:boolean;
     @IsOptional()

@@ -25,14 +25,14 @@ export class OrderController {
     @Delete(":orderId")
     @UseGuards(Protected,allowedToGuard)
     @Roles(userType.admin)
-    userRejectOffer(
+    deleteOrder(
         @Param("orderId",ParseMongoId) orderId:mongodbId
     ){
         return this.orderSrv.deleteOrder(orderId);
     };
     @Get()
     @UseGuards(Protected)
-    getRequestOffers(
+    getOrders(
         @Query() query:QueryOrderDto,
         @AuthUser() user:UserDoc
     ){

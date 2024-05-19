@@ -8,10 +8,11 @@ export type Opts= {path:string; select:string}[] | {path:string; select:string};
 
 @Injectable()
 export class CrudService <doc extends mongoose.Document , m extends g > {
-    constructor(private api:apiFeatures<doc,g>){};
+    constructor(private api:apiFeatures<doc,m>){};
     async getDocument(
         id:mongodbId,
-        model:Model<doc> ,opts? : { path:string; select:string }
+        model:Model<doc> ,
+        opts? : { path:string; select:string }
     ){
         let query=model.findById(id);
         if(opts){

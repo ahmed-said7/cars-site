@@ -31,9 +31,9 @@ export class PaytabService {
         if( request.user.toString() != user._id.toString() ){
             throw new HttpException("you are not request owner",400);
         };
-        // if( request.completed == true ){
-        //     throw new HttpException("your request has been paid",400);
-        // };
+        if( request.completed == true ){
+            throw new HttpException("your request has been paid",400);
+        };
         return this.paytab.paymentUrlUsingAxios(
             res,user,
             {  price:offer.price , offerId:offer._id  }
@@ -63,6 +63,13 @@ export class PaytabService {
             console.log("No request found",400);
             return;
         };
+        const orderExisting=await this.orderModel.findOne({
+            tranRef:data.tran_ref
+        });
+        if(orderExisting){
+            console.log("Order already exists");
+            return;
+        };
         const order=await this.orderModel.create({ 
             trader:offer.trader,
             user:request.user,
@@ -77,10 +84,11 @@ export class PaytabService {
             carmodel : request.carmodel,
             brand : request.brand,
             year:request.year,
-            requestImage:request.image,
-            offerImage:offer.image,
+            requestImage:request?.image?.split("request/")[1],
+            offerImage:offer?.image?.split("offer/")[1],
             details:request.details,
-            name:request.name
+            name:request.name,
+            tranRef:data.tran_ref
         })
         console.log(order);
     };

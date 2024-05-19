@@ -35,7 +35,10 @@ export class CarBrandSchema {
     };
 };
 
-export interface BrandDoc extends Document {
+export interface BrandDoc extends Document  {
     name: string;
     image:string;
 };
+
+let brand:BrandDoc
+brand

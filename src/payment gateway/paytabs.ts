@@ -15,6 +15,7 @@ export class Paytab {
     async paymentUrlUsingAxios(res:Response,user:UserDoc,meta:metadata){
         const profileId = process.env.profileId; 
         const serverKey = process.env.serverkey;
+        console.log(profileId,serverKey);
         const data = {
             profile_id: profileId,
             tran_type: "sale",
@@ -34,13 +35,13 @@ export class Paytab {
             'Authorization': serverKey,
             'Content-Type': 'application/json'
         };
-        axios.post('https://secure-egypt.paytabs.com/payment/request', data, { headers })
+        axios.post("https://secure.paytabs.sa/payment/request", data, { headers })
             .then(response => {
                 res.status(200).json({ data: response.data.redirect_url })
             })
             .catch(error => {
                 throw new HttpException("creating payment url error",400);
-            //    console.error(error); // Handle errors during the request
+               console.error(error); // Handle errors during the request
             });
     };
     async ValidatePayment(req:Request){
@@ -55,7 +56,7 @@ export class Paytab {
                 tran_ref: tranRef
             };
             const config = { method: 'post',
-                url: 'https://secure-egypt.paytabs.com/payment/query',
+                url: "https://secure.paytabs.sa/payment/query",
                 headers: {
                     Authorization: serverKey, 
                     'Content-Type': 'application/json'

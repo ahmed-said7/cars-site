@@ -27,7 +27,7 @@ export class OrderSchema {
             type:Schema.Types.ObjectId,
             ref:Models.User
         },
-        
+        tranRef:String,
         price:Number,
         status: { type:String , enum:["new","used"] },
         delivered:{ type:Boolean , default:false },
@@ -76,6 +76,7 @@ export interface OrderDoc extends Document {
     price:number;
     delivered:boolean;
     deliveredAt:Date;
+    tranRef:string;
     address:{
         postalCode:number,
         details:string,

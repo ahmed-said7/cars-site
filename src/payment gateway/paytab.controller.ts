@@ -1,4 +1,4 @@
-import { Body, Controller, Param,Post, Req, Res, UseGuards } from "@nestjs/common";
+import {  Controller, Param,Post, Req, Res, UseGuards } from "@nestjs/common";
 import { Protected } from "src/guards/protect.user";
 import { allowedToGuard } from "src/guards/allowed.user";
 import { userType } from "src/enums/user.type";
@@ -8,7 +8,6 @@ import { AuthUser } from "src/decorator/current.user";
 import { ParseMongoId } from "src/pipes/validate.mogoid";
 import { mongodbId } from "src/chat/chat.service";
 import { PaytabService } from "./paytab.service";
-import { CreatePaytabUrlDto } from "./dto/create.url.dto";
 import { Request, Response } from "express";
 
 

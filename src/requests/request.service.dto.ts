@@ -94,12 +94,13 @@ export class RequestService {
         return { request };
     };
     async getAllTraderRequests(query:QueryRequestDto,user:UserDoc){
+        const brandIds=user.tradingBrand.map( ( brand ) => brand._id );
         return this.crudSrv.getAllDocs( this.requestModel.find() ,query ,
             { 
                 $or : 
                 [ 
-                    { brand: { $in : user.tradingBrand } , status : user.tradingType } 
-                    ,{ brand: { $in : user.tradingBrand } , status:"both" } 
+                    { brand: { $in : brandIds } , status : user.tradingType } 
+                    ,{ brand: { $in : brandIds } , status:"both" } 
                 ] 
             },
             [   

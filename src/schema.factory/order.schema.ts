@@ -6,19 +6,14 @@ import { Models } from "src/enums/models";
 @Injectable()
 export class OrderSchema {
     schema=new Schema({
-        carmodel : {
+        offer : {
             type:Schema.Types.ObjectId,
-            ref:Models.CarModel
+            ref:Models.Offer
         },
-        brand : {
+        request : {
                 type:Schema.Types.ObjectId,
-                ref:Models.Brand
+                ref:Models.Request
         },
-        year:Number,
-        requestImage:String,
-        offerImage:String,
-        details:String,
-        name:String,
         user : {
             type:Schema.Types.ObjectId,
             ref:Models.User
@@ -29,7 +24,6 @@ export class OrderSchema {
         },
         tranRef:String,
         price:Number,
-        status: { type:String , enum:["new","used"] },
         delivered:{ type:Boolean , default:false },
         deliveredAt:Date,
         address:{
@@ -43,36 +37,14 @@ export class OrderSchema {
         timestamps:true
     });
     constructor(){
-        this.schema.post("init",function(){
-            if(this.requestImage){
-                this.requestImage=`${process.env.url}/request/${this.requestImage}`;
-            }
-            if(this.offerImage){
-                this.offerImage=`${process.env.url}/offer/${this.offerImage}`;
-            }
-        });
-        this.schema.post("save",function(){
-            if(this.requestImage){
-                this.requestImage=`${process.env.url}/request/${this.requestImage}`;
-            }
-            if(this.offerImage){
-                this.offerImage=`${process.env.url}/offer/${this.offerImage}`;
-            }
-        });
     };
 };
 
 export interface OrderDoc extends Document {
-    name: string;
-    carmodel:mongodbId;
-    brand:mongodbId;
+    offer:mongodbId;
+    request:mongodbId;
     user:mongodbId;
     trader:mongodbId;
-    requestImage:string,
-    offerImage:string,
-    year:number;
-    details:string;
-    status:string;
     price:number;
     delivered:boolean;
     deliveredAt:Date;

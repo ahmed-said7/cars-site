@@ -2,8 +2,11 @@ import { HttpException, Injectable } from "@nestjs/common";
 import mongoose, { Model, Query } from "mongoose";
 import { mongodbId } from "src/chat/chat.service";
 import { apiFeatures, g } from "./api.service";
+import { Models } from "src/enums/models";
 
-export type Opts= {path:string; select?:string}[] | {path:string; select?:string};
+export type Opts= 
+    {path:string; select?:string , populate?:Opts , model?:Models }[] 
+    | {path:string; select?:string , populate?:Opts , model?:Models }
 
 
 @Injectable()
@@ -20,7 +23,7 @@ export class CrudService <doc extends mongoose.Document , m extends g > {
         };
         const doc=await query;
         if(!doc){
-            throw new HttpException("documents not found",400);
+            throw new HttpException("document not found",400);
         };
         return doc;
     };
@@ -30,7 +33,7 @@ export class CrudService <doc extends mongoose.Document , m extends g > {
     ){
         let query=await model.findByIdAndDelete(id);
         if(!query){
-            throw new HttpException("documents not found",400);
+            throw new HttpException("document not found",400);
         };
     };
     async getAllDocs(

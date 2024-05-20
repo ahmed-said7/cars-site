@@ -47,7 +47,6 @@ export class PaytabService {
         const offer=await this.offerModel.findByIdAndUpdate(
             data.cart_id
             ,{
-                paidAt:new Date(),
                 isPaid:true
             }
         );
@@ -80,16 +79,10 @@ export class PaytabService {
                 street:data.shipping_details.street1,
                 mobile:data.shipping_details.phone
             },
-            status:request.status,
-            carmodel : request.carmodel,
-            brand : request.brand,
-            year:request.year,
-            requestImage:request?.image?.split("request/")[1],
-            offerImage:offer?.image?.split("offer/")[1],
-            details:request.details,
-            name:request.name,
+            offer:offer._id,
+            request:request._id,
             tranRef:data.tran_ref
-        })
+        });
         console.log(order);
     };
 };

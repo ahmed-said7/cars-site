@@ -16,7 +16,7 @@ import { OnEvent } from "@nestjs/event-emitter";
 
 @Injectable()
 export class OfferService {
-    constructor( 
+    constructor(
         @InjectModel(Models.Request) private reqModel:Model<RequestDoc>,
         @InjectModel(Models.Offer) private offerModel:Model<OfferDoc>,
         private crudSrv:CrudService<OfferDoc,QueryOfferDto>
@@ -26,11 +26,11 @@ export class OfferService {
         if( !request ){
             throw new HttpException("request not found",400);
         };
+        if( request.status != "both" && request.status != user.tradingType ){
+            throw new HttpException("user trading type should be" + request.status  ,400);
+        };
         if( request.completed ){
             throw new HttpException("request completed",400);
-        }
-        if( request.status !== user.tradingType ){
-            throw new HttpException("user trading type should be" + request.status  ,400);
         };
         const brandIds=user.tradingBrand.map( ( brand ) => brand._id.toString() );
         if( !brandIds.includes(request.brand.toString()) ){
@@ -45,12 +45,13 @@ export class OfferService {
     };
     async userAcceptOffer(offerId:mongodbId,user:UserDoc){
         const offer=await this.offerModel.findOne(
-            { _id:offerId,userRejected:false }
+            { _id:offerId }
         );
         if(!offer){
-            throw new HttpException("No offer found",400);
+            throw new HttpException("No offer found ",400);
         };
-        const request= await this.reqModel.findOne({ _id:offer.request , user:user._id });
+        const request= await this.reqModel
+            .findOne({ _id:offer.request , user:user._id });
         if(!request){
             throw new HttpException("you are not request owner",400);
         };
@@ -60,32 +61,20 @@ export class OfferService {
     };
     async traderAcceptOffer(offerId:mongodbId,user:UserDoc){
         const offer=await this.offerModel.findOne(
-            { _id:offerId,userAccepted:true }
+            { _id:offerId  }
         );
         if(!offer){
-            throw new HttpException("No offer found",400);
+            throw new HttpException("No offer found ",400);
         };
         if( offer.trader.toString() != user._id.toString() ){
             throw new HttpException("you are not offer owner",400);
         };
+        if( offer.userAccepted == false ){
+            throw new HttpException("not accepted by user",400);
+        };
         offer.traderAccepted = true;
         await offer.save();
         return { status: "offer accepted",offer};
-    };
-    async userRejectedOffer(offerId:mongodbId,user:UserDoc){
-        const offer=await this.offerModel.findOne(
-            { _id:offerId , userAccepted:false }
-        );
-        if( !offer ){
-            throw new HttpException("No offer found",400);
-        };
-        const request= await this.reqModel.findOne({ _id:offer.request , user:user._id });
-        if( !request ){
-            throw new HttpException("you are not request owner",400);
-        };
-        offer.userRejected=true;
-        await offer.save();
-        return { status: "offer rejected",offer};
     };
     async getOneOffer( offerId:mongodbId , user:UserDoc){
         let offer=await this.offerModel.findOne(
@@ -101,7 +90,7 @@ export class OfferService {
         if( user.role == "user" && !request ){
             throw new HttpException("you are not request owner",400);
         };
-        offer=await offer.populate([ { path:"request" } , { path:"trader" , select:"name image" } ])
+        offer=await offer.populate( this.populationOpts() );
         return {offer};
     };
     async getRequestOffers(reqId:mongodbId,query:QueryOfferDto,user:UserDoc){
@@ -118,7 +107,35 @@ export class OfferService {
         };
         return this.crudSrv.getAllDocs(
             this.offerModel.find() , query , { request : reqId , ... obj },
-            {path:"trader",select:"name image"}
+            { path:"trader" , select:"name image" }
+        );
+    };
+    private populationOpts(){
+        return [ 
+            { 
+                path:"request" , 
+                populate : [ 
+                    { path:"brand",model:Models.Brand } , 
+                    { path:"carmodel",model:Models.CarModel } ,
+                    { path:"user" , select:"name image" , model:Models.User } 
+                ] 
+            } 
+            , { 
+                path:"trader" , select:"name image" 
+            } 
+        ]
+    };
+    async getOffers(query:QueryOfferDto,user:UserDoc){
+        let obj={};
+        if( user.role == "user" ){
+            obj={ user:user._id };
+        };
+        if( user.role == "trader"){
+            obj={ trader:user._id }
+        };
+        return this.crudSrv.getAllDocs(
+            this.offerModel.find() , query , { ... obj } ,
+            this.populationOpts()
         );
     };
     async deleteOffer(offerId:mongodbId,user:UserDoc){
@@ -128,9 +145,6 @@ export class OfferService {
     };
     async updateOffer(body:UpdateOfferDto,offerId:mongodbId,user:UserDoc){
         let offer = await this.validateOfferOwner(offerId,user);
-        if(offer.userRejected){
-            throw new HttpException("your offer is rejected,create new offer",400);
-        };
         offer = await this.offerModel.findByIdAndUpdate(offerId,body,{new:true});
         return { offer };
     };
@@ -143,6 +157,9 @@ export class OfferService {
         };
         if( offer.trader.toString() != user._id.toString() ){
             throw new HttpException("you are not offer owner",400);
+        };
+        if( offer.isPaid ){
+            throw new HttpException("can not access offer,offer was paid by user",400);
         };
         return offer;
     };

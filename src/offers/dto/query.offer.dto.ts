@@ -7,7 +7,7 @@ export class QueryOfferDto {
     @IsMongoId()
     request : mongodbId;
     @IsOptional()
-    price:number|ComparisonOptions;
+    price:string|ComparisonOptions;
     @IsOptional()
     status:string;
     @IsOptional()

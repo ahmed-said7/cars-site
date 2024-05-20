@@ -18,10 +18,8 @@ export class OfferSchema {
             ref:Models.User
         },
         userAccepted : { type:Boolean , default:false } ,
-        userRejected : { type:Boolean , default:false } ,
         traderAccepted : { type:Boolean , default:false },
-        isPaid:Boolean,
-        paidAt:Date
+        isPaid: { type:Boolean , default:false }
     },{
         timestamps:true
     });
@@ -47,7 +45,5 @@ export interface OfferDoc extends Document {
     trader:mongodbId;
     userAccepted:boolean;
     traderAccepted:boolean;
-    userRejected:boolean;
     isPaid:boolean;
-    paidAt:Date;
 };

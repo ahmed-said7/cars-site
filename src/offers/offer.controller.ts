@@ -18,6 +18,15 @@ import { QueryOfferDto } from "./dto/query.offer.dto";
 @Controller("offer")
 export class OfferController {
     constructor(private offerService:OfferService ){};
+    @Get()
+    @UseGuards(Protected,allowedToGuard)
+    @Roles(userType.admin,userType.trader,userType.user)
+    getOffers(
+        @AuthUser() user:UserDoc,
+        @Query() query:QueryOfferDto
+    ){
+        return this.offerService.getOffers(query,user);
+    };
     @Post()
     @UseGuards(Protected,allowedToGuard)
     @Roles(userType.trader)
@@ -44,15 +53,6 @@ export class OfferController {
         @AuthUser() user:UserDoc
     ){
         return this.offerService.userAcceptOffer(offerId,user);
-    };
-    @Patch("user-reject/:offerId")
-    @UseGuards(Protected,allowedToGuard)
-    @Roles(userType.user)
-    userRejectOffer(
-        @Param("offerId",ParseMongoId) offerId:mongodbId,
-        @AuthUser() user:UserDoc
-    ){
-        return this.offerService.userRejectedOffer(offerId,user);
     };
     @Patch(":offerId")
     @UseGuards(Protected,allowedToGuard)
@@ -84,7 +84,7 @@ export class OfferController {
     };
     @Get(":offerId")
     @UseGuards(Protected)
-    getReview(
+    getOffer(
         @Param("offerId",ParseMongoId) offerId:mongodbId,
         @AuthUser() user:UserDoc
     ){

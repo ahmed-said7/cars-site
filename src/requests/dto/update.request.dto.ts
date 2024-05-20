@@ -11,9 +11,6 @@ export class UpdateRequestDto {
     @IsMongoId()
     brand: mongodbId;
     @IsOptional()
-    @IsMongoId()
-    user: mongodbId;
-    @IsOptional()
     @IsNumber()
     @Min(1990)
     @Max(new Date().getFullYear())

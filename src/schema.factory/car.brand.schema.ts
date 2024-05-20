@@ -39,6 +39,3 @@ export interface BrandDoc extends Document  {
     name: string;
     image:string;
 };
-
-let brand:BrandDoc
-brand

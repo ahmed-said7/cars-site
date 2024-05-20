@@ -7,7 +7,6 @@ import { UserDoc } from "src/schema.factory/user.schema";
 import { BrandDoc } from "src/schema.factory/car.brand.schema";
 import { ModelDoc } from "src/schema.factory/car.model.schema";
 import { mongodbId } from "src/chat/chat.service";
-import { userType } from "src/enums/user.type";
 import { CrudService } from "src/filter/crud.service";
 import { CreateRequestDto } from "./dto/create.request.dto";
 import { QueryRequestDto } from "./dto/query.request.dto";
@@ -54,6 +53,9 @@ export class RequestService {
         if( request.user.toString() != user._id.toString()  ){
             throw new HttpException("you are not allowed to edit this request",400);
         };
+        if(request.completed){
+            throw new HttpException("can not access this request has been completed",400);
+        }
         return request;
     }
     async updateRequest(body:UpdateRequestDto,reqId:mongodbId,user:UserDoc){
@@ -65,7 +67,8 @@ export class RequestService {
         }else if( body.brand ){
             await this.validateCarmodelBrand(request.carmodel,body.brand);
         };
-        request= await this.requestModel.findByIdAndUpdate( reqId , body , {new:true} );
+        request= await this.requestModel
+            .findByIdAndUpdate( reqId , body , {new:true} ).populate( this.populationOpts() );
         return { request };
     };
     async deleteRequest( reqId:mongodbId,user:UserDoc ){
@@ -86,12 +89,15 @@ export class RequestService {
         if( user.role == "trader" && !brandIds.includes(request.brand.toString()) ){
             throw new HttpException("request brand is not in your brands",400)
         };
-        request=await request.populate([
+        request=await request.populate( this.populationOpts() );
+        return { request };
+    };
+    private populationOpts(){
+        return [
             {path:"brand",select:"name image"},
             {path:"carmodel",select:"name"},
             {path:"user",select:"name image"}
-        ]);
-        return { request };
+        ]
     };
     async getAllTraderRequests(query:QueryRequestDto,user:UserDoc){
         const brandIds=user.tradingBrand.map( ( brand ) => brand._id );
@@ -103,11 +109,7 @@ export class RequestService {
                     ,{ brand: { $in : brandIds } , status:"both" } 
                 ] 
             },
-            [   
-                {path:"brand",select:"name image"}, 
-                {path:"carmodel",select:"name"}, 
-                {path:"user",select:"name image"} 
-            ]
+            this.populationOpts()
         );
     };
     async getAllRequests(query:QueryRequestDto,user:UserDoc){
@@ -117,18 +119,16 @@ export class RequestService {
         };
         return this.crudSrv.getAllDocs( this.requestModel.find() ,query ,
             obj,
-            [   
-                {path:"brand",select:"name image"}, 
-                {path:"carmodel",select:"name"}, 
-                {path:"user",select:"name image"} 
-            ]
+            this.populationOpts()
         );
     };
     async activateRequest(reqId:mongodbId,user:UserDoc){
-            let request=await this.accessRequest(reqId,user);
-            request.createdAt=new Date();
-            request.updatedAt=new Date();
-            await request.save();
-            return { status : "request activated"  };
+        let request=await this.accessRequest(reqId,user);
+        request= await this.requestModel.findByIdAndUpdate
+            ( 
+                reqId , { createdAt:new Date() , updatedAt:new Date() } , {new:true} 
+            )
+            .populate( this.populationOpts() );
+        return { request };
     };
 };

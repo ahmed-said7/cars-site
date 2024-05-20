@@ -4,23 +4,17 @@ import { ComparisonOptions } from "src/enums/interfaces";
 
 export class QueryOrderDto {
     @IsOptional()
-    name: string;
+    @IsMongoId()
+    offer:mongodbId;
     @IsOptional()
     @IsMongoId()
-    carmodel:mongodbId;
-    @IsOptional()
-    @IsMongoId()
-    brand:mongodbId;
+    request:mongodbId;
     @IsOptional()
     @IsMongoId()
     user:mongodbId;
     @IsOptional()
     @IsMongoId()
     trader:mongodbId;
-    @IsOptional()
-    year:string | ComparisonOptions;
-    @IsOptional()
-    status:string;
     @IsOptional()
     price:string | ComparisonOptions;
     @IsOptional()

@@ -27,7 +27,7 @@ export class CreateSpareDto {
     name:string;
     @IsOptional()
     @IsString()
-    image:number;
+    image:string;
     @IsNotEmpty()
     @IsEnum(spareType)
     status:string;

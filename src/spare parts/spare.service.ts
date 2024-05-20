@@ -24,15 +24,15 @@ export class SpareService {
         private crudSrv:CrudService<SpareDoc,QuerySpareDto>
     ){};
     async createSpare(body:CreateSpareDto,user:UserDoc){
-        const brand=await this.BrandModel.findOne({ _id: body.brand });
-        if( !brand ){ 
-            throw new HttpException("brand not found",400); 
-        };
         await this.validateCarmodelBrand(body.carmodel,body.brand)
         const spare=await this.SpareModel.create({ ... body , user:user._id });
         return { spare };
     };
     private async validateCarmodelBrand(carmodelId:mongodbId,brandId:mongodbId){
+        const brand=await this.BrandModel.findOne({ _id: brandId });
+        if( !brand ){ 
+            throw new HttpException("brand not found",400); 
+        };
         const carmodel =await this.CarBrandModel.findOne({
             brand: brandId ,
             _id: carmodelId

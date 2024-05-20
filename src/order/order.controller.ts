@@ -15,7 +15,7 @@ export class OrderController {
     constructor(public orderSrv: OrderService){};
     @Patch(":orderId")
     @UseGuards(Protected,allowedToGuard)
-    @Roles(userType.trader)
+    @Roles(userType.user)
     updateDeliveredOrder(
         @Param("orderId",ParseMongoId) offerId:mongodbId,
         @AuthUser() user:UserDoc

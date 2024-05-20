@@ -9,6 +9,8 @@ import { UserDoc } from "src/schema.factory/user.schema";
 import { mongodbId } from "src/chat/chat.service";
 import { CreateTraderDto, UpdateTraderDto } from "./dto/trader.dto";
 import { BrandDoc } from "src/schema.factory/car.brand.schema";
+import { CrudService } from "src/filter/crud.service";
+import { QueryUserDto } from "./dto/query.user.dto";
 
 
 
@@ -43,7 +45,8 @@ export class UserService {
     (
         private config:ConfigService,
         @InjectModel(Models.User) private Usermodel: Model<UserDoc>,
-        @InjectModel(Models.Brand) private brandModel: Model<BrandDoc>
+        @InjectModel(Models.Brand) private brandModel: Model<BrandDoc>,
+        private api : CrudService<UserDoc,QueryUserDto>
     ) {};
     async signup(body:SignUp){
         let user=await this.validateEmail(body.email);
@@ -114,14 +117,8 @@ export class UserService {
         };
         return { user };
     };
-    async getUsersBySearchName(keyword?:string){
-        const users=
-        await this.Usermodel.find(
-            {
-            $text : { $search : keyword }
-        }
-        );
-        return { users };
+    async getAllUsers(query:QueryUserDto){
+        return this.api.getAllDocs(this.Usermodel.find(),query);
     };
     async allowMemberToTrading(id:mongodbId){
         const user = await this.Usermodel

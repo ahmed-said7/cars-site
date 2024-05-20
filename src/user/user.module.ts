@@ -7,9 +7,11 @@ import { UserService } from "./user.service";
 import { UserController } from "./user.controller";
 import { CarBrandSchema } from "src/schema.factory/car.brand.schema";
 import { TraderController } from "./trader.controller";
+import { ApiModule } from "src/filter/api.module";
 
 @Module({
     imports:[
+        ApiModule,
         MongooseModule.forFeatureAsync([
             { 
                 name:Models.User,

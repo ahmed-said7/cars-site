@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Res, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Res, UseGuards, UseInterceptors } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { LoginUserDto } from "./dto/login.dto";
 import { SignupUserAdminDto } from "./dto/signup.dto";
@@ -13,7 +13,7 @@ import { FileInterceptorImage } from "src/interceptor/file.interceptor";
 import { mongodbId } from "src/chat/chat.service";
 import { Roles } from "src/decorator/metadata";
 import { userType } from "src/enums/user.type";
-import { Response } from "express";
+import { QueryUserDto } from "./dto/query.user.dto";
 
 
 @Controller("user")
@@ -49,11 +49,12 @@ export class UserController {
     updateUser( @AuthUser() user:UserDoc,@Body() body:UpdateUserAdminDto  ){
         return this.userService.updateUser(body,user);
     };
-    @Get("search/:keyword")
+    @Get()
     @UseGuards(Protected)
     getUsers( 
-        @Param("keyword") keyword:string  ){
-        return this.userService.getUsersBySearchName(keyword);
+        @Query() query:QueryUserDto
+    ){
+        return this.userService.getAllUsers(query);
     };
     @Get("one/:id")
     @UseGuards(Protected)

@@ -40,9 +40,9 @@ export class BrandModelService {
         return this.crudSrv.
             getAllDocs(this.CarBrandModel.find(),query);
     };
-    async getBrandModels(id:mongodbId){
+    async getBrandModels( id:mongodbId , query:QueryCarModelDto ){
         return this.crudSrv.
-            getAllDocs(this.CarBrandModel.find() , {} ,{ brand: id } );
+            getAllDocs(this.CarBrandModel.find() , query ,{ brand: id } );
     };
     async updateModel(body:UpdateCarModelDto,id:mongodbId){
         let {model} =await this.getBrandModel(id);

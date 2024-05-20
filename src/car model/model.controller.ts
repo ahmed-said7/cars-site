@@ -42,9 +42,10 @@ export class BrandModelController {
     };
     @Get("brand/:brandId")
     getBrandModels(
+        @Query() query:QueryCarModelDto,
         @Param("brandId",ParseMongoId) brandId:mongodbId
     ){
-        return this.modelService.getBrandModels(brandId);
+        return this.modelService.getBrandModels(brandId,query);
     };
     @Get()
     getModels(

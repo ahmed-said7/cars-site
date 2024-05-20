@@ -3,7 +3,7 @@ import mongoose, { Model, Query } from "mongoose";
 import { mongodbId } from "src/chat/chat.service";
 import { apiFeatures, g } from "./api.service";
 
-export type Opts= {path:string; select:string}[] | {path:string; select:string};
+export type Opts= {path:string; select?:string}[] | {path:string; select?:string};
 
 
 @Injectable()
@@ -37,12 +37,12 @@ export class CrudService <doc extends mongoose.Document , m extends g > {
         query:Query<doc[],doc>,queryObj:m
         ,obj={},populationOptions?:Opts
     ){
-        let api=this.api.filter(query,queryObj,obj)
-        .sort().search().select();
+        let api=this.api.filter(query,queryObj,obj);
         if(populationOptions){
             api=api.population(populationOptions);
         };
-        let { query:result , paginationObj  }=await api.pagination();
+        let { query:result , paginationObj  }=await api.sort().search()
+            .select().pagination();
         const data=await result;
         return { data , paginationObj };
     };

@@ -1,6 +1,6 @@
 import { Query } from "mongoose";
-import {} from "mongoose";
 import { Opts } from "./crud.service";
+import { Injectable } from "@nestjs/common";
 export interface g {
     page?:string;
     sort?:string;
@@ -17,7 +17,7 @@ export interface Pagination {
     limit?:number;
 };
 
-
+@Injectable()
 export class apiFeatures< T , m extends g > {
     public paginationObj:Pagination={};
     query:Query< T[] , T >;

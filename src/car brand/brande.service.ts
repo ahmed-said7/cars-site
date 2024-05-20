@@ -27,7 +27,7 @@ export class BrandService {
         return { brand };
     };
     async deleteBrand(id:mongodbId){
-        const brand=await this.crudSrv.deleteDocument(id,this.brandModel);
+        await this.crudSrv.deleteDocument(id,this.brandModel);
         return { status:"deleted" };
     };
     async getAllBrands(query:QueryBrandDto){
@@ -46,7 +46,7 @@ export class BrandService {
     private async validateBrandName(name:string){
         const brandExist=await this.brandModel.findOne({ name });
         if(brandExist){
-            throw new HttpException("brand add before",400);
+            throw new HttpException("brand added before",400);
         };
     };
 };

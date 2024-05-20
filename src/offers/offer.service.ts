@@ -128,7 +128,9 @@ export class OfferService {
     async getOffers(query:QueryOfferDto,user:UserDoc){
         let obj={};
         if( user.role == "user" ){
-            obj={ user:user._id };
+            let reqs=await this.reqModel.find({ user : user._id }).select("_id");
+            reqs=reqs.map( field => field._id );
+            obj={ request : { $in : reqs } };
         };
         if( user.role == "trader"){
             obj={ trader:user._id }

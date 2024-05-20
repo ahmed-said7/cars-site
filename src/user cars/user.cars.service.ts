@@ -37,7 +37,7 @@ export class OwnCarService {
         }else if( body.carmodel ){
             await this.validateCarBrandModel(car.brand,body.carmodel);
         };
-        car=await this.OwnCarModel.findByIdAndUpdate(carId,body,{new:true});
+        car=await this.OwnCarModel.findByIdAndUpdate(carId,body,{new:true}).populate( this.populationOpts() );
         return { car };
     };
     private async validateCarBrandModel(brandId:mongodbId,modelId:mongodbId){
@@ -51,24 +51,23 @@ export class OwnCarService {
         };
     };
     async getCar(id:mongodbId,user:UserDoc){
-        const car=await this.crudSrv.getDocument(id,this.OwnCarModel);
-        if(user._id.toString() != car.user.toString() ){
-            throw new HttpException("you are not car owner ",400);
-        };
+        const car=await this.crudSrv.getDocument( id , this.OwnCarModel , this.populationOpts() );
         return { car };
     };
     async deleteCar(id:mongodbId,user:UserDoc){
-        await this.getCar(id,user);
-        await this.crudSrv.deleteDocument(id,this.OwnCarModel);
+        const {car}=await this.getCar(id,user);
+        await car.deleteOne();
         return { status:"deleted" };
+    };
+    private populationOpts(){
+        return [{path:"brand",select:"name image"},{path:"carmodel",select:"name"}];
     };
     async getAllMyOwnCars(query:UserCarsQueryDto,user:UserDoc){
         return this.crudSrv
         .getAllDocs(
             this.OwnCarModel.find(),
-            query,
-            {user:user._id}
-            ,[{path:"brand",select:"name image"},{path:"carmodel",select:"name"}]
+            query,{user:user._id}
+            ,this.populationOpts()
         );
     };
 };

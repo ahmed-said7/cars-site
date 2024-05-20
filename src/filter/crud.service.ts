@@ -15,7 +15,7 @@ export class CrudService <doc extends mongoose.Document , m extends g > {
     async getDocument(
         id:mongodbId,
         model:Model<doc> ,
-        opts? : { path:string; select:string }
+        opts? : Opts
     ){
         let query=model.findById(id);
         if(opts){

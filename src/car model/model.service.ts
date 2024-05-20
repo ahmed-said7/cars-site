@@ -29,7 +29,8 @@ export class BrandModelService {
         return { model };
     };
     async getBrandModel(id:mongodbId){
-        const model=await this.crudSrv.getDocument(id,this.CarBrandModel);
+        const model=await this.crudSrv
+            .getDocument(id,this.CarBrandModel,{path:"brand",select:"name image"});
         return { model };
     };
     async deleteModel(id:mongodbId){
@@ -38,7 +39,7 @@ export class BrandModelService {
     };
     async getAllModels(query:QueryCarModelDto){
         return this.crudSrv.
-            getAllDocs(this.CarBrandModel.find(),query);
+            getAllDocs(this.CarBrandModel.find(),query,{},{ path:"brand" });
     };
     async getBrandModels( id:mongodbId , query:QueryCarModelDto ){
         return this.crudSrv.
@@ -53,7 +54,8 @@ export class BrandModelService {
         }else if( body.brand ){
             await this.validateBrandModelName(model.name,body.brand);
         };
-        model=await this.CarBrandModel.findByIdAndUpdate(id,body,{new:true});
+        model=await this.CarBrandModel
+            .findByIdAndUpdate(id,body,{new:true}).populate("brand");
         if(!model){
             throw new HttpException("model not found",400);
         };

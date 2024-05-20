@@ -37,7 +37,7 @@ export class ChatService {
             ]
         });
         if(chatExist){
-            throw new HttpException("chat already exists",400);
+            return { chat:chatExist , status:"chat between user already exist" };
         };
         const chat=await this.chatModel.create(body);
         return { chat };

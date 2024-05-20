@@ -14,9 +14,7 @@ import { FileInterceptor } from "@nestjs/platform-express";
 @Controller("chat")
 @UseGuards(Protected)
 export class ChatController {
-
     constructor(private chatService: ChatService){};
-
     @Post()
     @UseInterceptors(FileInterceptor("image"),FileInterceptorImage)
     createChat(

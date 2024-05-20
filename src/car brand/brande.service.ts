@@ -6,7 +6,6 @@ import { CrudService } from "src/filter/crud.service";
 import { BrandDoc } from "src/schema.factory/car.brand.schema";
 import { QueryBrandDto } from "./dto/query.brand.dto";
 import { CreateBrandDto } from "./dto/create.brand.dto";
-import { UserDoc } from "src/schema.factory/user.schema";
 import { mongodbId } from "src/chat/chat.service";
 import { UpdateBrandDto } from "./dto/update.brand.dto";
 

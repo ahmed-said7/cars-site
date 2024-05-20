@@ -9,7 +9,7 @@ interface CreateChat {
     name: string;
     image: string;
     user: mongodbId;
-    admin: mongodbId;
+    admin?: mongodbId;
 };
 interface UpdateChat {
     name?: string;
@@ -50,7 +50,7 @@ export class ChatService {
             ]
         });
         if(!chatExist){
-            throw new HttpException("chat not found",400);
+            throw new HttpException("chat not found or you should be a chat member",400);
         };
         const chat=await this.chatModel.findByIdAndUpdate( chatId,body,{new:true} );
         return { chat };

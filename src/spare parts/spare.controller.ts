@@ -53,14 +53,12 @@ export class SpareController {
         return this.spareService.deleteSpare(spareId,user);
     };
     @Get()
-    @UseGuards(Protected)
     getSpares(
         @Query() query:QuerySpareDto
     ){
         return this.spareService.getAllSpares(query);
     };
     @Get(":spareId")
-    @UseGuards(Protected)
     getSpare(
         @Param("spareId",ParseMongoId) spareId:mongodbId
     ){

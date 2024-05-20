@@ -50,6 +50,7 @@ export class ReviewService {
             review.rating = body.rating;
         };
         await review.save();
+        review=await review.populate([{path:"user",select:"name image"},{path:"review",select:"name image"}]);
         return { review }
     };
     async deleteReview(  reviewId:mongodbId , user:UserDoc ){

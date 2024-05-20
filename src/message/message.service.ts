@@ -44,8 +44,8 @@ export class MessageService {
         if( message.user.toString() != user._id.toString() ){
             throw new HttpException("you are not message sender",400)
         };
-        const chat=await this.chatModel.findOne({ _id:message });
-        if( chat.lastMessage.toString() == messageId.toString() ){
+        const chat=await this.chatModel.findOne({ _id : message.chat });
+        if( chat?.lastMessage?.toString() == messageId.toString() ){
             chat.lastMessage=(await this.msgModel.find({
                 chat: message.chat
             }).sort("-createdAt"))[1]._id;

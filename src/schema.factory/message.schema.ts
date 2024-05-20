@@ -1,8 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import {Schema,Document, Query} from "mongoose";
 import { Models } from "src/enums/models";
-import { ChatDoc } from "./chat.schema";
-import { UserDoc } from "./user.schema";
 import { mongodbId } from "src/chat/chat.service";
 
 @Injectable()
@@ -34,9 +32,6 @@ export class MessageSchema {
             if(this.image){
                 this.image=`${process.env.url}/message/${this.image}`;
             };
-        });
-        this.schema.pre< Query< MessageDoc|MessageDoc[], MessageDoc > >(/^find/,function(){
-            this.populate([{path:"chat"},{path:"user"}]);
         });
     };
 };

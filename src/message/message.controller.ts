@@ -41,7 +41,7 @@ export class MessageController {
         return this.msgService.updateMessage(messageId,body,user);
     };
     @Delete(":messageId")
-    deleteMessages(
+    deleteMessage(
         @Param("messageId",ParseMongoId) messageId:mongodbId ,
         @AuthUser() user:UserDoc
     ){

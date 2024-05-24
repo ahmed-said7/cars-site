@@ -8,10 +8,11 @@ import { UserController } from "./user.controller";
 import { CarBrandSchema } from "src/schema.factory/car.brand.schema";
 import { TraderController } from "./trader.controller";
 import { ApiModule } from "src/filter/api.module";
+import { mailerModule } from "src/nodemailer/mailer.module";
 
 @Module({
     imports:[
-        ApiModule,
+        ApiModule,mailerModule,
         MongooseModule.forFeatureAsync([
             { 
                 name:Models.User,

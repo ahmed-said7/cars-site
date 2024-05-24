@@ -32,6 +32,15 @@ export class UserController {
     updatePassword( @Body() body:UpdatePasswordDto , @AuthUser() user:UserDoc  ){
         return this.userService.updatepassword(body, user);
     };
+    @Get("verify")
+    @UseGuards(Protected)
+    sendVerificationToEmail( @AuthUser() user:UserDoc  ){
+        return this.userService.createEmailVerificationCode(user);
+    };
+    @Patch("verify/:code")
+    verifyUserEmail( @Param("code") code:string  ){
+        return this.userService.verifyEmail(code);
+    };
     @Delete()
     @UseGuards(Protected)
     deleteUser( @AuthUser() user:UserDoc  ){

@@ -11,7 +11,8 @@ import { CreateTraderDto, UpdateTraderDto } from "./dto/trader.dto";
 import { BrandDoc } from "src/schema.factory/car.brand.schema";
 import { CrudService } from "src/filter/crud.service";
 import { QueryUserDto } from "./dto/query.user.dto";
-
+import * as crypto from "crypto";
+import { mailerService } from "src/nodemailer/mailer.service";
 
 
 interface SignUp {
@@ -46,7 +47,8 @@ export class UserService {
         private config:ConfigService,
         @InjectModel(Models.User) private Usermodel: Model<UserDoc>,
         @InjectModel(Models.Brand) private brandModel: Model<BrandDoc>,
-        private api : CrudService<UserDoc,QueryUserDto>
+        private api : CrudService<UserDoc,QueryUserDto>,
+        private mailerService:mailerService
     ) {};
     async signup(body:SignUp){
         let user=await this.validateEmail(body.email);
@@ -54,6 +56,7 @@ export class UserService {
             throw new HttpException("password does not match password confirm",400);
         };
         user = await this.Usermodel.create(body);
+        await this.emailVerification(user);
         const token=this.createtoken(user._id);
         return { token , user };
     };
@@ -109,6 +112,45 @@ export class UserService {
         };
         const updated= await this.Usermodel.findByIdAndUpdate(user._id,body,{new:true});
         return { status:"updated",user:updated };
+    };
+    private async emailVerification(user:UserDoc){
+        const code=this.mailerService.resetCode();
+        user.emailVerifiedCode=this.createHash(code);
+        user.emailVerifiedExpired=new Date( Date.now() + 5 * 60 * 1000 );
+        try{
+            await this.mailerService.sendWelcome({email:user.email,resetCode:code});
+        }catch(err){
+            user.emailVerifiedCode=undefined;
+            user.emailVerifiedExpired=undefined;
+            await user.save();
+            throw new HttpException("nodemailer error",400);
+        };
+        await user.save();
+    };
+    async createEmailVerificationCode( user:UserDoc ){
+        if(user.emailVertified){
+            throw new HttpException("your email has been verified already",400);
+        };
+        await this.emailVerification(user);
+        return {status:"code sent"};
+    };
+    private createHash(code:string){
+        return crypto.createHash('sha256').update(code).digest('hex');
+    }
+
+    async verifyEmail(code:string){
+        const hash=this.createHash(code);
+        const user=await this.Usermodel.findOne({
+            emailVerifiedCode:hash,emailVerifiedExpired:{$gt:Date.now()}
+        });
+        if(!user){
+            throw new HttpException('email Verified Code expired',400);
+        };
+        user.emailVerifiedCode=undefined;
+        user.emailVerifiedExpired=undefined;
+        user.emailVertified=true;
+        await user.save();
+        return {status:"verified"};
     };
     async getOneUser(userId:mongodbId){
         const user = await this.Usermodel.findOne({ _id:userId });

@@ -36,6 +36,9 @@ export class UserSchema {
             type:String,
             enum:["new","used"]
         },
+        emailVertified:{type:Boolean,default:false},
+        emailVerifiedExpired:Date,
+        emailVerifiedCode:String,
         tradingBrand:[{ type:Schema.Types.ObjectId,ref:Models.Brand }],
         ratingQuantity:{type:Number,default:0},
         averageRating:{type:Number,default:0},
@@ -84,6 +87,9 @@ export interface UserDoc extends Document {
     role:string;
     passwordChangedAt:Date;
     tradingType:string;
+    emailVertified:boolean;
+    emailVerifiedExpired:Date;
+    emailVerifiedCode:string;
     addresses:{
         _id:mongodbId;
         postalCode:number;

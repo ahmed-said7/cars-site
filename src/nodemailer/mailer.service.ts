@@ -29,13 +29,12 @@ export class mailerService {
             `;
         return this.sendMail({ from:this.from , to, subject,text});
     };
-    // sendChangeingPasswordCode( body : { email:string; resetCode:string; }){
-    //     const to=body.email;
-    //     const subject='reset code to change your password';
-    //     const text=`your reset code to change your passsword is ${body.resetCode}`;
-    //     const from='e-shop';
-    //     return this.send({from,to,subject,text});
-    // };
+    sendChangeingPasswordCode( body : { email:string; resetCode:string; }){
+        const to=body.email;
+        const subject='reset code to change your password';
+        const text=`your reset code to change your passsword is ${body.resetCode}`;
+        return this.sendMail({from:this.from,to,subject,text});
+    };
     private sendMail( opts: { from:string; to:string; subject:string; text:string; }){
         return this.transport.sendMail(opts);
     };

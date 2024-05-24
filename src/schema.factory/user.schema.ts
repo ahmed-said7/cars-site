@@ -39,6 +39,9 @@ export class UserSchema {
         emailVertified:{type:Boolean,default:false},
         emailVerifiedExpired:Date,
         emailVerifiedCode:String,
+        passwordResetCode:String,
+        passwordResetCodeExpires:Date,
+        passwordResetCodeVertified:Boolean,
         tradingBrand:[{ type:Schema.Types.ObjectId,ref:Models.Brand }],
         ratingQuantity:{type:Number,default:0},
         averageRating:{type:Number,default:0},
@@ -85,11 +88,14 @@ export interface UserDoc extends Document {
     image:string;
     password:string;
     role:string;
-    passwordChangedAt:Date;
-    tradingType:string;
-    emailVertified:boolean;
-    emailVerifiedExpired:Date;
-    emailVerifiedCode:string;
+    passwordChangedAt?:Date;
+    tradingType?:string;
+    emailVertified?:boolean;
+    emailVerifiedExpired?:Date;
+    emailVerifiedCode?:string;
+    passwordResetCode?:string;
+    passwordResetCodeExpires?:Date;
+    passwordResetCodeVertified?:boolean;
     addresses:{
         _id:mongodbId;
         postalCode:number;

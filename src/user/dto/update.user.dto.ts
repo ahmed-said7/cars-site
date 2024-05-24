@@ -1,4 +1,4 @@
-import { IsEmail, IsOptional, IsString, MinLength } from "class-validator";
+import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength } from "class-validator";
 
 export class UpdateUserAdminDto {
     @IsOptional()
@@ -11,4 +11,10 @@ export class UpdateUserAdminDto {
     @IsOptional()
     @IsString()
     image: string;
+};
+
+export class forgetPassowrdBody {
+    @IsNotEmpty()
+    @IsEmail({},{message:"provide valid email address"})
+    email: string;
 };

@@ -152,6 +152,63 @@ export class UserService {
         await user.save();
         return {status:"verified"};
     };
+    async forgetPassword(email:string){
+        let user=await this.Usermodel.findOne({ email });
+        if(! user ){
+            throw new HttpException('user not found',400);
+        };
+        const resetCode=this.mailerService.resetCode();
+        user.passwordResetCode=this.createHash(resetCode);
+        user.passwordResetCodeExpires=new Date( Date.now() + 4*60*1000 );
+        await user.save();
+        try{
+            await this.mailerService
+                .sendChangeingPasswordCode({email:user.email,resetCode});
+        }catch(e){
+            console.log(e);
+            user.passwordResetCode=undefined;
+            user.passwordResetCodeExpires=undefined;
+            await user.save();
+            throw new HttpException('internal server error',400);
+        };
+        return {resetCode}
+    };
+    
+    async vertfyResetCode(resetCode:string){
+        const hash=this.createHash(resetCode);
+        let user=await this.Usermodel
+            .findOne
+            ({ 
+                passwordResetCode:hash , 
+                passwordResetCodeExpires:{ $gt: Date.now() } }
+            );
+        if(! user ){
+            throw new HttpException('user not found',400);
+        };
+        user.passwordResetCode=undefined;
+        user.passwordResetCodeExpires=undefined;
+        user.passwordResetCodeVertified=true;
+        await user.save();
+        return {status:'verified'}
+    };
+    
+    async changePassword(body:{email:string; password:string; passwordConfirm:string;}){
+        let user=await this.Usermodel
+            .findOne({ email:body.email });
+        if(! user  ){
+            throw new HttpException('user not found',400);
+        };
+        if(! user.passwordResetCodeVertified ){
+            throw new HttpException('resetcode is not vertified',400);
+        };
+        if(body.password !== body.passwordConfirm){
+            throw new HttpException('password mismatch',400);
+        };
+        user.password = body.password;
+        user.passwordChangedAt=new Date();
+        await user.save();
+        return {user};
+    };
     async getOneUser(userId:mongodbId){
         const user = await this.Usermodel.findOne({ _id:userId });
         if( !user ){

@@ -204,6 +204,7 @@ export class UserService {
         if(body.password !== body.passwordConfirm){
             throw new HttpException('password mismatch',400);
         };
+        user.passwordResetCodeVertified=null;
         user.password = body.password;
         user.passwordChangedAt=new Date();
         await user.save();

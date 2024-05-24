@@ -54,7 +54,7 @@ export class UserController {
         return this.userService.changePassword(body);
     };
 
-    @Patch('auth/reset-password/:code')
+    @Patch('auth/reset-code/:code')
     verifyResetCode(@Param('code') code:string){
         return this.userService.vertfyResetCode(code);
     };

@@ -262,14 +262,6 @@ export class UserService {
     async getAllUsers(query:QueryUserDto){
         return this.api.getAllDocs(this.Usermodel.find(),query);
     };
-    // async allowMemberToTrading(id:mongodbId){
-    //     const user = await this.Usermodel
-    //         .findOneAndUpdate({ _id: id },{ allowTrading: true },{new:true});
-    //     if( !user ){
-    //         throw new HttpException("User not found",400);
-    //     };
-    //     return { trader:user };
-    // };
     async allowOrPreventTrading( id:mongodbId , body:allowTradingDto ){
         const user=await this.Usermodel.findOneAndUpdate({ _id: id }, body ,{new:true});
         if( !user ){
@@ -277,29 +269,6 @@ export class UserService {
         };
         return { trader : user };
     };
-    // async updateTrader(body:UpdateTraderDto,user:UserDoc){
-    //     if(body.tradingBrand){
-    //         body.tradingBrand=await this.validateBrands(body.tradingBrand);
-    //     };
-    //     if(body.email){
-    //         await this.validateEmail(body.email);
-    //     };
-    //     const trader=await this.Usermodel.findByIdAndUpdate(user._id,body,{new:true});
-    //     return { trader };
-    // };
-    // async createTrader(body:CreateTraderDto){
-    //     if(body.tradingBrand){
-    //         body.tradingBrand=await this.validateBrands(body.tradingBrand);
-    //     };
-    //     await this.validateEmail(body.email);
-    //     body.role="trader";
-    //     if( body.password !== body.passwordConfirm ){
-    //         throw new HttpException("password does not match password confirm",400);
-    //     };
-    //     const trader=await this.Usermodel.create(body);
-    //     const token=this.createtoken(trader._id);
-    //     return { trader,token };
-    // };
     private async validateBrands(ids:mongodbId[]){
         ids=[ ... new Set(ids) ]
         const brands=await this.brandModel.find({ _id : { $in : ids } });

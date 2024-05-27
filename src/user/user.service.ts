@@ -16,6 +16,7 @@ import { mailerService } from "src/nodemailer/mailer.service";
 import {  CreateUserDto } from "./dto/signup.dto";
 import { userType } from "src/enums/user.type";
 import { UpdateUserDto } from "./dto/update.user.dto";
+import { bool } from "sharp";
 
 
 
@@ -263,10 +264,15 @@ export class UserService {
         return this.api.getAllDocs(this.Usermodel.find(),query);
     };
     async allowOrPreventTrading( id:mongodbId , body:allowTradingDto ){
-        const user=await this.Usermodel.findOneAndUpdate({ _id: id }, body ,{new:true});
+        const user=await this.Usermodel.findOne({ _id: id });
         if( !user ){
             throw new HttpException("User not found",400);
         };
+        if( user.role != userType.trader ){
+            throw new HttpException("id is not belong to trader",400);
+        };
+        user.allowTrading=body.allowTrading;
+        await user.save();
         return { trader : user };
     };
     private async validateBrands(ids:mongodbId[]){

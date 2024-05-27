@@ -17,7 +17,7 @@ export class AdminController {
     @Post()
     @UseGuards(Protected,allowedToGuard)
     @Roles(userType.admin)
-    createUserByAdmin( body:CreateUserDto ){
+    createUserByAdmin( @Body() body:CreateUserDto ){
         return this.userService.createUserByAdmin( body );
     };
 

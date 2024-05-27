@@ -24,17 +24,17 @@ export class UserController {
         return this.userService.createEmailVerificationCode(user);
     };
 
-    @Delete("user")
+    @Delete()
     @UseGuards(Protected)
     deleteUser( @AuthUser() user:UserDoc  ){
         return this.userService.deleteLoggedUser(user);
     };
-    @Get("user")
+    @Get()
     @UseGuards(Protected)
     getUser( @AuthUser() user:UserDoc  ){
         return this.userService.getLoggedUser(user);
     };
-    @Patch("user")
+    @Patch()
     @UseGuards(Protected)
     @UseInterceptors(FileInterceptor("image"),FileInterceptorImage)
     updateUser( @AuthUser() user:UserDoc,@Body() body:UpdateUserDto  ){

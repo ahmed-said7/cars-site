@@ -7,27 +7,18 @@ import * as jwt from "jsonwebtoken";
 import { ConfigService } from "@nestjs/config";
 import { UserDoc } from "src/schema.factory/user.schema";
 import { mongodbId } from "src/chat/chat.service";
-import { CreateTraderDto, UpdateTraderDto } from "./dto/trader.dto";
+import { allowTradingDto, tradingType } from "./dto/trader.dto";
 import { BrandDoc } from "src/schema.factory/car.brand.schema";
 import { CrudService } from "src/filter/crud.service";
 import { QueryUserDto } from "./dto/query.user.dto";
 import * as crypto from "crypto";
 import { mailerService } from "src/nodemailer/mailer.service";
+import {  CreateUserDto } from "./dto/signup.dto";
+import { userType } from "src/enums/user.type";
+import { UpdateUserDto } from "./dto/update.user.dto";
 
 
-interface SignUp {
-    name: string;
-    password: string;
-    passwordConfirm:string;
-    email: string;
-    role?:string;
-};
 
-interface UpdateUser {
-    name?: string;
-    email?: string;
-    role?:string;
-};
 
 interface LogIn {
     email: string;
@@ -50,10 +41,21 @@ export class UserService {
         private api : CrudService<UserDoc,QueryUserDto>,
         private mailerService:mailerService
     ) {};
-    async signup(body:SignUp){
+    async signup( body : CreateUserDto ){
         let user=await this.validateEmail(body.email);
         if( body.password !== body.passwordConfirm ){
             throw new HttpException("password does not match password confirm",400);
+        };
+        if( body.role == userType.trader && !body.tradingType ){
+            body.tradingType=tradingType.new;
+        } else if ( body.role != userType.trader ){
+            body.tradingType=null;
+        };
+
+        if( body.role == userType.trader && body.tradingBrand?.length > 0 ){
+            body.tradingBrand=await this.validateBrands(body.tradingBrand);
+        }else{
+            body.tradingBrand = [];
         };
         user = await this.Usermodel.create(body);
         await this.emailVerification(user);
@@ -77,6 +79,37 @@ export class UserService {
             sign( {userId} , this.config.get<string>("secret") , {expiresIn:"12d"} );
         return "Bearer "+token;
     };
+    async createUserByAdmin( body:CreateUserDto ){
+        let user=await this.validateEmail(body.email);
+        if( body.password !== body.passwordConfirm ){
+            throw new HttpException("password does not match password confirm",400);
+        };
+
+        if( body.role == userType.trader && !body.tradingType ){
+            body.tradingType=tradingType.new;
+        } else if ( body.role != userType.trader ){
+            body.tradingType=null;
+        };
+
+        if( body.role == userType.trader && body.tradingBrand?.length > 0 ){
+            body.tradingBrand=await this.validateBrands(body.tradingBrand);
+        }else{
+            body.tradingBrand = [];
+        };
+
+        user = await this.Usermodel.create(body);
+        await this.emailVerification(user);
+        return { user };
+
+    };
+    async deleteUserByAdmin(userId:mongodbId){
+        const user=await this.Usermodel.findByIdAndDelete(userId);
+        if(!user){
+            throw new HttpException("User not found",400);
+        };
+        return { status:"deleted" };
+    };
+
     async updatepassword(body:ChangePassword,user:UserDoc){
         const valid=await bcryptjs.compare(body.currentPassword,user.password);
         if( ! valid ){
@@ -90,11 +123,11 @@ export class UserService {
         await user.save();
         return { user , status :"password has been updated" }
     };
-    async deleteUser(user:UserDoc){
-        await user.deleteOne();
-        return { status : " user deleted" };
+    async deleteLoggedUser(user:UserDoc){
+        await user.updateOne({ active: false });
+        return { active: user.active };
     };
-    async getUser(user:UserDoc){
+    async getLoggedUser(user:UserDoc){
         user.password=null;
         user.passwordChangedAt=null;
         return { user };
@@ -106,11 +139,20 @@ export class UserService {
         };
         return user;
     };
-    async updateUser(body:UpdateUser,user:UserDoc){
+    async updateUser(body:UpdateUserDto,user:UserDoc){
         if(body.email){
             await this.validateEmail(body.email);
         };
-        const updated= await this.Usermodel.findByIdAndUpdate(user._id,body,{new:true});
+        if( user.role == userType.trader && body.tradingBrand?.length > 0 ){
+            body.tradingBrand=await this.validateBrands(body.tradingBrand);
+        }else if( user.role != userType.trader && body.tradingBrand?.length > 0 ){
+            body.tradingBrand=[];
+        };
+        if( user.role != userType.trader && body.tradingType ){
+            body.tradingType=null;
+        };
+        const updated= await this.Usermodel
+            .findByIdAndUpdate(user._id,body,{new:true});
         return { status:"updated",user:updated };
     };
     private async emailVerification(user:UserDoc){
@@ -174,7 +216,7 @@ export class UserService {
         return {resetCode}
     };
     
-    async vertfyResetCode(resetCode:string){
+    async verifyResetCode(resetCode:string){
         const hash=this.createHash(resetCode);
         let user=await this.Usermodel
             .findOne
@@ -220,45 +262,44 @@ export class UserService {
     async getAllUsers(query:QueryUserDto){
         return this.api.getAllDocs(this.Usermodel.find(),query);
     };
-    async allowMemberToTrading(id:mongodbId){
-        const user = await this.Usermodel
-            .findOneAndUpdate({ _id: id },{ allowTrading: true },{new:true});
+    // async allowMemberToTrading(id:mongodbId){
+    //     const user = await this.Usermodel
+    //         .findOneAndUpdate({ _id: id },{ allowTrading: true },{new:true});
+    //     if( !user ){
+    //         throw new HttpException("User not found",400);
+    //     };
+    //     return { trader:user };
+    // };
+    async allowOrPreventTrading( id:mongodbId , body:allowTradingDto ){
+        const user=await this.Usermodel.findOneAndUpdate({ _id: id }, body ,{new:true});
         if( !user ){
             throw new HttpException("User not found",400);
         };
-        return { trader:user };
+        return { trader : user };
     };
-    async preventMemberFromTrading(id:mongodbId){
-        const user = await this.Usermodel
-            .findOneAndUpdate({ _id: id },{ allowTrading: false },{new:true});
-        if( !user ){
-            throw new HttpException("User not found",400);
-        };
-        return { trader:user };
-    };
-    async updateTrader(body:UpdateTraderDto,user:UserDoc){
-        if(body.tradingBrand){
-            body.tradingBrand=await this.validateBrands(body.tradingBrand);
-        };
-        if(body.email){
-            await this.validateEmail(body.email);
-        };
-        const trader=await this.Usermodel.findByIdAndUpdate(user._id,body,{new:true});
-        return { trader };
-    };
-    async createTrader(body:CreateTraderDto){
-        if(body.tradingBrand){
-            body.tradingBrand=await this.validateBrands(body.tradingBrand);
-        };
-        await this.validateEmail(body.email);
-        body.role="trader";
-        if( body.password !== body.passwordConfirm ){
-            throw new HttpException("password does not match password confirm",400);
-        };
-        const trader=await this.Usermodel.create(body);
-        const token=this.createtoken(trader._id);
-        return { trader,token };
-    };
+    // async updateTrader(body:UpdateTraderDto,user:UserDoc){
+    //     if(body.tradingBrand){
+    //         body.tradingBrand=await this.validateBrands(body.tradingBrand);
+    //     };
+    //     if(body.email){
+    //         await this.validateEmail(body.email);
+    //     };
+    //     const trader=await this.Usermodel.findByIdAndUpdate(user._id,body,{new:true});
+    //     return { trader };
+    // };
+    // async createTrader(body:CreateTraderDto){
+    //     if(body.tradingBrand){
+    //         body.tradingBrand=await this.validateBrands(body.tradingBrand);
+    //     };
+    //     await this.validateEmail(body.email);
+    //     body.role="trader";
+    //     if( body.password !== body.passwordConfirm ){
+    //         throw new HttpException("password does not match password confirm",400);
+    //     };
+    //     const trader=await this.Usermodel.create(body);
+    //     const token=this.createtoken(trader._id);
+    //     return { trader,token };
+    // };
     private async validateBrands(ids:mongodbId[]){
         ids=[ ... new Set(ids) ]
         const brands=await this.brandModel.find({ _id : { $in : ids } });

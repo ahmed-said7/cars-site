@@ -1,6 +1,8 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength } from "class-validator";
+import { ArrayMinSize, IsArray, IsBoolean, IsEmail, IsEnum, IsMongoId, IsNotEmpty, IsOptional, IsString, MinLength } from "class-validator";
+import { tradingType } from "./trader.dto";
+import { mongodbId } from "src/chat/chat.service";
 
-export class UpdateUserAdminDto {
+export class UpdateUserDto {
     @IsOptional()
     @IsString()
     @MinLength(4)
@@ -11,10 +13,16 @@ export class UpdateUserAdminDto {
     @IsOptional()
     @IsString()
     image: string;
+    @IsOptional()
+    @IsEnum(tradingType)
+    tradingType: string;
+    @IsOptional()
+    @IsArray()
+    @ArrayMinSize(1)
+    @IsMongoId({each:true})
+    tradingBrand:mongodbId[];
+    @IsOptional()
+    @IsBoolean()
+    active:boolean;
 };
 
-export class forgetPassowrdBody {
-    @IsNotEmpty()
-    @IsEmail({},{message:"provide valid email address"})
-    email: string;
-};

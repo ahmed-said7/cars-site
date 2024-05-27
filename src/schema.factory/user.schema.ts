@@ -46,6 +46,7 @@ export class UserSchema {
         ratingQuantity:{type:Number,default:0},
         averageRating:{type:Number,default:0},
         passwordChangedAt:Date,
+        active:Boolean,
         allowTrading:{type:Boolean,default:false},
         addresses:[{
             postalCode:Number,
@@ -106,4 +107,5 @@ export interface UserDoc extends Document {
     }[];
     tradingBrand:BrandDoc[];
     allowTrading:boolean;
+    active:boolean;
 };

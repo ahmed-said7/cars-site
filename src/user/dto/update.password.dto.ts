@@ -26,3 +26,9 @@ export class changePasswordDto {
     @IsString()
     passwordConfirm: string;
 };
+
+export class forgetPassowrdBody {
+    @IsNotEmpty()
+    @IsEmail({},{message:"provide valid email address"})
+    email: string;
+};

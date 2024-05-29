@@ -33,6 +33,20 @@ export class PaytabController {
         return this.paytabService.validateSpareCallback(request);
     };
 
+    @Post("offer/return")
+    returnedOfferPayment(
+        @Req() request:Request 
+    ){
+        return { status : "paid" };
+    };
+
+    @Post("spare/return")
+    returnedSparePayment(
+        @Req() request:Request 
+    ){
+        return { status : "paid" };
+    };
+
     @Get("spare")
     @UseGuards(Protected,allowedToGuard)
     @Roles(userType.user)

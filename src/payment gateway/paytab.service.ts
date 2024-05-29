@@ -10,7 +10,6 @@ import { IResponsePaytab, Paytab } from "./paytabs";
 import { Request, Response } from "express";
 import { OrderDoc } from "src/schema.factory/order.schema";
 import { OnEvent } from "@nestjs/event-emitter";
-import { SpareDoc } from "src/schema.factory/spare.schema";
 
 @Injectable()
 export class PaytabService {
@@ -35,7 +34,7 @@ export class PaytabService {
         if( request.completed == true ){
             throw new HttpException("your request has been paid",400);
         };
-        let price=request.quantity * offer.price;
+        let price = request.quantity * offer.price;
         if( request.priceReq > 0 ){
             price += request.priceReq + ( request.quantity - 1 ) * 5.75;
         };

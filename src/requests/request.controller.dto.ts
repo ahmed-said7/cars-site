@@ -21,6 +21,7 @@ export class RequestController {
     constructor(
         private reqService:RequestService
     ){};
+
     @Post()
     @UseInterceptors(FileInterceptor("image"),FileInterceptorImage)
     @UseGuards(Protected,allowedToGuard)
@@ -31,6 +32,16 @@ export class RequestController {
     ){
         return this.reqService.createRequest(body,user);
     };
+    
+    @Post("spare")
+    @UseGuards(Protected,allowedToGuard)
+    @Roles(userType.user)
+    createSparesRequest(
+        @AuthUser() user:UserDoc
+    ){
+        return this.reqService.allSpareRequest(user);
+    };
+
     @Patch("activate/:reqId")
     @UseGuards(Protected,allowedToGuard)
     @Roles(userType.user,userType.admin)
@@ -40,6 +51,7 @@ export class RequestController {
     ){
         return this.reqService.activateRequest(reqId,user);
     };
+    
     @Patch(":reqId")
     @UseInterceptors(FileInterceptor("image"),FileInterceptorImage)
     @UseGuards(Protected,allowedToGuard)
@@ -51,6 +63,7 @@ export class RequestController {
     ){
         return this.reqService.updateRequest(body,reqId,user);
     };
+    
     @Delete(":reqId")
     @UseGuards(Protected,allowedToGuard)
     @Roles(userType.user,userType.admin)
@@ -60,6 +73,7 @@ export class RequestController {
     ){
         return this.reqService.deleteRequest(reqId,user);
     };
+    
     @Get("trader")
     @UseGuards(Protected,allowedToGuard)
     @Roles(userType.trader)
@@ -69,6 +83,7 @@ export class RequestController {
     ){
         return this.reqService.getAllTraderRequests(query,user);
     };
+    
     @Get()
     @UseGuards(Protected,allowedToGuard)
     @Roles(userType.admin,userType.user)
@@ -78,6 +93,7 @@ export class RequestController {
     ){
         return this.reqService.getAllRequests(query,user);
     };
+    
     @Get(":reqId")
     @UseGuards(Protected)
     getRequest(
@@ -86,4 +102,5 @@ export class RequestController {
     ){
         return this.reqService.getRequest(reqId,user);
     };
+
 };

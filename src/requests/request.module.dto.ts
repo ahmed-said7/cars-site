@@ -9,6 +9,7 @@ import { SchemaFactoryModule } from "src/schema.factory/schema.module";
 import { UserSchema } from "src/schema.factory/user.schema";
 import { RequestController } from "./request.controller.dto";
 import { RequestService } from "./request.service.dto";
+import { SpareSchema } from "src/schema.factory/spare.schema";
 
 
 
@@ -47,6 +48,14 @@ import { RequestService } from "./request.service.dto";
                 name:Models.Request,
                 useFactory:function(reqSchema:RequestSchema){
                     return reqSchema.schema;
+                }
+            },
+            {
+                imports:[SchemaFactoryModule],
+                inject:[SpareSchema],
+                name:Models.Spare,
+                useFactory:function(spareSchema:SpareSchema){
+                    return spareSchema.schema;
                 }
             }
         ])

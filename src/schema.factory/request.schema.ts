@@ -27,6 +27,8 @@ export class RequestSchema {
             type:Schema.Types.ObjectId,
             ref:Models.User
         },
+        priceReq:{ type:Number , default:0 },
+        quantity:{ type:Number , default:1 },
         completed:{ type:Boolean , default:false }
     },{
         timestamps:true
@@ -57,4 +59,6 @@ export interface RequestDoc extends Document {
     name:string;
     createdAt:Date;
     updatedAt:Date;
+    priceReq:number;
+    quantity:number;
 };

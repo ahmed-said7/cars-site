@@ -27,4 +27,7 @@ export class UpdateRequestDto {
     @IsOptional()
     @IsString()
     name:string;
+    @IsOptional()
+    @IsNumber()
+    quantity:number;
 };

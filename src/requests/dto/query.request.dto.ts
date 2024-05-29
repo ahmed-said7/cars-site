@@ -34,4 +34,6 @@ export class QueryRequestDto {
     select?:string;
     @IsOptional()
     limit?:string;
+    @IsOptional()
+    quantity:string;
 };

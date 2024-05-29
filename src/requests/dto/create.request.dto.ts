@@ -34,4 +34,7 @@ export class CreateRequestDto {
     @IsNotEmpty()
     @IsString()
     name:string;
+    @IsOptional()
+    @IsNumber()
+    quantity:number;
 };

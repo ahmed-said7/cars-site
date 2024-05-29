@@ -35,7 +35,11 @@ export class PaytabService {
         if( request.completed == true ){
             throw new HttpException("your request has been paid",400);
         };
-        const meta={  price:offer.price , cartId:offer._id  };
+        let price=request.quantity * offer.price;
+        if( request.priceReq > 0 ){
+            price += request.priceReq + ( request.quantity - 1 ) * 5.75;
+        };
+        const meta={ price ,  cartId:offer._id  };
         const urls={ 
             callback: process.env.callback , 
             response:process.env.response 
@@ -88,24 +92,4 @@ export class PaytabService {
         });
         console.log(order);
     };
-    // @OnEvent("spare.payment")
-    // private async sparePaymentCreated(data:IResponsePaytab){
-    //     const user=await this.userModel.findById(data.cart_id)
-    //     if( !user ){
-    //         console.log("user not found");
-    //     };
-    //     const spares=await this.spareModel.find();
-    //     const reqs=spares.map( (spare) => {
-    //         return { 
-    //             name:spare.name,
-    //             carmodel:spare.carmodel,
-    //             brand:spare.brand,
-    //             user:data.cart_id,
-    //             year:spare.from,
-    //             image:spare.image?.split("spare/")[1]
-    //         }
-    //     });
-    //     const result=await this.reqModel.insertMany(reqs);
-    //     console.log("payment completed");
-    // };
 };

@@ -22,6 +22,7 @@ export class RequestService {
         @InjectModel(Models.Request) private requestModel:Model<RequestDoc>,
         @InjectModel(Models.CarModel) private CarBrandModel:Model<ModelDoc>,
         @InjectModel(Models.Brand) private BrandModel:Model<BrandDoc>,
+        @InjectModel(Models.Spare) private spareModel:Model<SpareDoc>,
         private crudSrv:CrudService<SpareDoc,QueryRequestDto>,
         private events:EventEmitter2
     ){};
@@ -130,5 +131,21 @@ export class RequestService {
             )
             .populate( this.populationOpts() );
         return { request };
+    };
+    async allSpareRequest(user:UserDoc){
+        const spares=await this.spareModel.find();
+        const reqs=spares.map( (spare) => {
+            return { 
+                name:spare.name,
+                carmodel:spare.carmodel,
+                brand:spare.brand,
+                user:user._id,
+                year:spare.from,
+                image:spare.image?.split("spare/")[1],
+                priceReq:11.5
+            }
+        });
+        const result=await this.requestModel.insertMany(reqs);
+        return { requests:result }
     };
 };

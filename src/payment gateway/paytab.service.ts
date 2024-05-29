@@ -18,8 +18,6 @@ export class PaytabService {
         @InjectModel(Models.Offer) private offerModel:Model<OfferDoc>,
         @InjectModel(Models.Request) private reqModel:Model<RequestDoc>,
         @InjectModel(Models.Order) private orderModel:Model<OrderDoc>,
-        @InjectModel(Models.Spare) private spareModel:Model<SpareDoc>,
-        @InjectModel(Models.User) private userModel:Model<UserDoc>,
         private paytab:Paytab
     ){}
     async createOfferPaymentUrl(res:Response, offerId:mongodbId,user:UserDoc ){
@@ -39,24 +37,13 @@ export class PaytabService {
         };
         const meta={  price:offer.price , cartId:offer._id  };
         const urls={ 
-            callback: process.env.offercallback , 
-            response:process.env.offerresponse 
-        };
-        return this.paytab.paymentUrlUsingAxios(res,user,meta,urls)
-    };
-    createSpareRequestsPaymentUrl(res:Response,user:UserDoc){
-        const meta={  price:11.5 , cartId:user._id  };
-        const urls={ 
-            callback: process.env.sparecallback , 
-            response:process.env.spareresponse 
+            callback: process.env.callback , 
+            response:process.env.response 
         };
         return this.paytab.paymentUrlUsingAxios(res,user,meta,urls)
     };
     async validateOfferCallback(req:Request){
         this.paytab.ValidateOfferPayment(req);
-    };
-    async validateSpareCallback(req:Request){
-        this.paytab.ValidateAllSpareRequest(req);
     };
     @OnEvent("offer.payment")
     private async offerPaymentCreated(data:IResponsePaytab){
@@ -101,24 +88,24 @@ export class PaytabService {
         });
         console.log(order);
     };
-    @OnEvent("spare.payment")
-    private async sparePaymentCreated(data:IResponsePaytab){
-        const user=await this.userModel.findById(data.cart_id)
-        if( !user ){
-            console.log("user not found");
-        };
-        const spares=await this.spareModel.find();
-        const reqs=spares.map( (spare) => {
-            return { 
-                name:spare.name,
-                carmodel:spare.carmodel,
-                brand:spare.brand,
-                user:data.cart_id,
-                year:spare.from,
-                image:spare.image?.split("spare/")[1]
-            }
-        });
-        const result=await this.reqModel.insertMany(reqs);
-        console.log("payment completed");
-    };
+    // @OnEvent("spare.payment")
+    // private async sparePaymentCreated(data:IResponsePaytab){
+    //     const user=await this.userModel.findById(data.cart_id)
+    //     if( !user ){
+    //         console.log("user not found");
+    //     };
+    //     const spares=await this.spareModel.find();
+    //     const reqs=spares.map( (spare) => {
+    //         return { 
+    //             name:spare.name,
+    //             carmodel:spare.carmodel,
+    //             brand:spare.brand,
+    //             user:data.cart_id,
+    //             year:spare.from,
+    //             image:spare.image?.split("spare/")[1]
+    //         }
+    //     });
+    //     const result=await this.reqModel.insertMany(reqs);
+    //     console.log("payment completed");
+    // };
 };

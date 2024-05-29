@@ -26,12 +26,6 @@ export class PaytabController {
         return this.paytabService.validateOfferCallback(request);
     };
 
-    @Post("spare")
-    validateSparePayment(
-        @Req() request:Request 
-    ){
-        return this.paytabService.validateSpareCallback(request);
-    };
 
     @Post("offer/return")
     returnedOfferPayment(
@@ -39,24 +33,7 @@ export class PaytabController {
     ){
         return { status : "paid" };
     };
-
-    @Post("spare/return")
-    returnedSparePayment(
-        @Req() request:Request 
-    ){
-        return { status : "paid" };
-    };
-
-    @Get("spare")
-    @UseGuards(Protected,allowedToGuard)
-    @Roles(userType.user)
-    createRequestAllSparesPayment(
-        @AuthUser() user:UserDoc,
-        @Res() res:Response
-    ){
-        return this.paytabService.createSpareRequestsPaymentUrl(res,user);
-    };
-    @Get("offer/:offerId")
+    @Get(":offerId")
     @UseGuards(Protected,allowedToGuard)
     @Roles(userType.user)
     createOfferPayment(

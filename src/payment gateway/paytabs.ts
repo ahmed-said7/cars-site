@@ -42,18 +42,6 @@ export class Paytab {
             });
         };
     };
-    async ValidateAllSpareRequest(req:Request){
-        if(req.body.tran_ref){
-            this.validationCallback(req.body.tran_ref).then((res) => {
-                const data=res.data;
-                if( data?.payment_result?.response_status && data?.payment_result?.response_status == "A" ){
-                    this.events.emit("spare.payment",data);
-                };
-            }).catch((error) => {
-                console.error('Payment query failed:', error);
-            });
-        };
-    };
     private payUrl(
         res:Response,
         user:UserDoc,

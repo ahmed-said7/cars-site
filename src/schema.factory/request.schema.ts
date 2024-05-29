@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { Schema , Document } from "mongoose";
 import { mongodbId } from "src/chat/chat.service";
 import { Models } from "src/enums/models";
+import { requestType } from "src/requests/dto/create.request.dto";
 
 @Injectable()
 export class RequestSchema {
@@ -17,7 +18,10 @@ export class RequestSchema {
         year:Number,
         image:String,
         details:String,
-        status: { type:String , enum:["new","used","both"] },
+        status: { 
+            type:String , enum:[requestType.new,requestType.used,requestType.both] ,
+            default : requestType.both
+        },
         name:String,
         user : {
             type:Schema.Types.ObjectId,
@@ -30,12 +34,12 @@ export class RequestSchema {
     constructor(){
         this.schema.post("init",function(){
             if(this.image){
-                this.image=`${process.env.url}/request/${this.image}`;
+                this.image=`${process.env.url}/spare/${this.image}`;
             }
         });
         this.schema.post("save",function(){
             if(this.image){
-                this.image=`${process.env.url}/request/${this.image}`;
+                this.image=`${process.env.url}/spare/${this.image}`;
             }
         });
     };

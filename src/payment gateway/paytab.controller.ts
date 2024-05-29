@@ -1,4 +1,4 @@
-import {  Controller, Param,Post, Req, Res, UseGuards } from "@nestjs/common";
+import {  Controller, Get, Param,Post, Req, Res, UseGuards } from "@nestjs/common";
 import { Protected } from "src/guards/protect.user";
 import { allowedToGuard } from "src/guards/allowed.user";
 import { userType } from "src/enums/user.type";
@@ -14,28 +14,42 @@ import { Request, Response } from "express";
 
 @Controller("paytab")
 export class PaytabController {
+
     constructor(
         private paytabService:PaytabService
     ){};
-    
-    @Post()
-    validateRequest(
+
+    @Post("offer")
+    validatOfferPayment(
         @Req() request:Request 
     ){
-        return this.paytabService.validateCallback(request);
+        return this.paytabService.validateOfferCallback(request);
     };
-    @Post("response")
-    async getResponsePayment(){
-        return { status:"paid" }
+
+    @Post("spare")
+    validateSparePayment(
+        @Req() request:Request 
+    ){
+        return this.paytabService.validateSpareCallback(request);
     };
-    @Post(":offerId")
+
+    @Get("spare")
     @UseGuards(Protected,allowedToGuard)
     @Roles(userType.user)
-    createRequest(
+    createRequestAllSparesPayment(
+        @AuthUser() user:UserDoc,
+        @Res() res:Response
+    ){
+        return this.paytabService.createSpareRequestsPaymentUrl(res,user);
+    };
+    @Get("offer/:offerId")
+    @UseGuards(Protected,allowedToGuard)
+    @Roles(userType.user)
+    createOfferPayment(
         @AuthUser() user:UserDoc,
         @Res() res:Response,
         @Param("offerId",ParseMongoId) offerId:mongodbId
     ){
-        return this.paytabService.getPaytabUrl(res,offerId,user);
+        return this.paytabService.createOfferPaymentUrl(res,offerId,user);
     };
 };

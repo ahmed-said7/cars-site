@@ -12,6 +12,7 @@ import { PaytabController } from "./paytab.controller";
 import { OrderSchema } from "src/schema.factory/order.schema";
 import { CarModelSchema } from "src/schema.factory/car.model.schema";
 import { CarBrandSchema } from "src/schema.factory/car.brand.schema";
+import { SpareSchema } from "src/schema.factory/spare.schema";
 
 
 @Module({
@@ -19,6 +20,14 @@ import { CarBrandSchema } from "src/schema.factory/car.brand.schema";
     [
         ApiModule,SchemaFactoryModule,
         MongooseModule.forFeatureAsync([
+            {
+                imports:[SchemaFactoryModule],
+                inject:[SpareSchema],
+                name:Models.Spare,
+                useFactory:function(spare:SpareSchema){
+                    return spare.schema;
+                }
+            },
             {
                 imports:[SchemaFactoryModule],
                 inject:[CarBrandSchema],

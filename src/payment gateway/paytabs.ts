@@ -5,27 +5,75 @@ import { UserDoc } from "src/schema.factory/user.schema";
 import axios  from "axios";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 interface metadata {
-    offerId:mongodbId;
+    cartId:mongodbId;
     price: number;
+};
+
+interface Urls {
+    callback:string;
+    response:string;
 };
 
 @Injectable()
 export class Paytab {
     constructor(private events:EventEmitter2){};
-    async paymentUrlUsingAxios(res:Response,user:UserDoc,meta:metadata){
+    async paymentUrlUsingAxios(
+        res:Response,user:UserDoc,
+        meta:metadata,
+        url:Urls
+    ){
+        return this.payUrl(
+            res,user,
+            url.callback,
+            url.response,
+            meta.cartId,
+            meta.price
+        );
+    };
+    async ValidateOfferPayment(req:Request){
+        if(req.body.tran_ref){
+            this.validationCallback(req.body.tran_ref).then((res) => {
+                const data=res.data;
+                if( data?.payment_result?.response_status && data?.payment_result?.response_status == "A" ){
+                    this.events.emit("offer.payment",data);
+                };
+            }).catch((error) => {
+                console.error('Payment query failed:', error);
+            });
+        };
+    };
+    async ValidateAllSpareRequest(req:Request){
+        if(req.body.tran_ref){
+            this.validationCallback(req.body.tran_ref).then((res) => {
+                const data=res.data;
+                if( data?.payment_result?.response_status && data?.payment_result?.response_status == "A" ){
+                    this.events.emit("spare.payment",data);
+                };
+            }).catch((error) => {
+                console.error('Payment query failed:', error);
+            });
+        };
+    };
+    private payUrl(
+        res:Response,
+        user:UserDoc,
+        callback:string,
+        response:string,
+        cartId:mongodbId,
+        price:number
+    ){
         const profileId = process.env.profileId; 
         const serverKey = process.env.serverkey;
-        console.log(profileId,serverKey);
         const data = {
             profile_id: profileId,
             tran_type: "sale",
             tran_class: "ecom",
-            cart_id: meta.offerId,
+            cart_id: cartId,
             cart_description: "buy mechanical parts",
             cart_currency: process.env.currency,
-            cart_amount: meta.price,
-            callback: process.env.callback,
-            return: process.env.response,
+            cart_amount: price,
+            callback: callback,
+            return: response,
             customer_details : {
                 name:user?.name,
                 email:user?.email
@@ -41,36 +89,26 @@ export class Paytab {
             })
             .catch(error => {
                 throw new HttpException("creating payment url error",400);
-               console.error(error); // Handle errors during the request
             });
     };
-    async ValidatePayment(req:Request){
-        if(req.body.tran_ref){
-            const profileId = process.env.profileId; 
-            const tranRef = req.body.tran_ref;
-            const serverKey = process.env.serverkey;
-            const paytaburl=process.env.paytaburl+"/payment/query";
-            console.log(paytaburl);
-            const data = {
-                profile_id: profileId,
-                tran_ref: tranRef
-            };
-            const config = { method: 'post',
-                url: "https://secure.paytabs.sa/payment/query",
-                headers: {
-                    Authorization: serverKey, 
-                    'Content-Type': 'application/json'
-            },data };
-            axios(config).then((res) => {
-                const data=res.data;
-                if( data?.payment_result?.response_status && data?.payment_result?.response_status == "A" ){
-                    this.events.emit("payment.created",data);
-                };
-            }).catch((error) => {
-                console.error('Payment query failed:', error);
-            });
+    private validationCallback(tran_ref:string){
+        const profileId = process.env.profileId; 
+        const tranRef = tran_ref;
+        const serverKey = process.env.serverkey;
+        const data = {
+            profile_id: profileId,
+            tran_ref: tranRef
         };
-    }
+        const config = { method: 'post',
+            url: "https://secure.paytabs.sa/payment/query",
+            headers: {
+                Authorization: serverKey, 
+                'Content-Type': 'application/json'
+            }
+            ,data 
+        };
+        return axios(config);
+    };
 };
 
 export interface IResponsePaytab{

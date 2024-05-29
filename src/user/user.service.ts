@@ -16,7 +16,6 @@ import { mailerService } from "src/nodemailer/mailer.service";
 import {  CreateUserDto } from "./dto/signup.dto";
 import { userType } from "src/enums/user.type";
 import { UpdateUserDto } from "./dto/update.user.dto";
-import { bool } from "sharp";
 
 
 

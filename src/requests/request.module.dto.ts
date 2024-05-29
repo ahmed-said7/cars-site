@@ -52,6 +52,6 @@ import { RequestService } from "./request.service.dto";
         ])
     ],
     controllers : [RequestController],
-    providers : [RequestService,{provide:"folder",useValue:"request"}]
+    providers : [RequestService,{provide:"folder",useValue:"spare"}]
 })
 export class RequestModule {};

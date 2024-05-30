@@ -31,7 +31,8 @@ export class RequestSchema {
         quantity:{ type:Number , default:1 },
         completed:{ type:Boolean , default:false }
     },{
-        timestamps:true
+        timestamps:true,
+        toJSON:{virtuals:true},toObject:{virtuals:true}
     });
     constructor(){
         this.schema.post("init",function(){
@@ -44,6 +45,11 @@ export class RequestSchema {
                 this.image=`${process.env.url}/spare/${this.image}`;
             }
         });
+        this.schema.virtual("offers",{
+            localField:"_id",
+            foreignField:"request",
+            ref:Models.Offer
+        })
     };
 };
 

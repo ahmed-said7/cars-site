@@ -136,7 +136,7 @@ export class OfferService {
             obj={ trader:user._id }
         };
         return this.crudSrv.getAllDocs(
-            this.offerModel.find() , query , { ... obj } ,
+            this.offerModel.find() , query , obj  ,
             this.populationOpts()
         );
     };

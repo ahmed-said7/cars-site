@@ -79,7 +79,7 @@ export class RequestService {
         return { status : "deleted"  };
     };
     async getRequest( reqId:mongodbId,user:UserDoc ){
-        let request=await this.requestModel.findById(reqId);
+        let request=await this.requestModel.findById(reqId).populate({ path:"offers" });
         if(!request){
             throw new HttpException("request not found",400);
         };
@@ -118,8 +118,8 @@ export class RequestService {
         if( user.role == "user" ){
             obj = { user : user._id };
         };
-        return this.crudSrv.getAllDocs( this.requestModel.find() ,query ,
-            obj,
+        return this.crudSrv.getAllDocs( this.requestModel.find() , { ... query } ,
+            obj ,
             this.populationOpts()
         );
     };

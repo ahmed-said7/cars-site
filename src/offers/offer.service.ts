@@ -132,10 +132,11 @@ export class OfferService {
             let reqs=await this.reqModel.find({ user : user._id }).select("_id");
             reqs=reqs.map( field => field._id );
             obj={ request : { $in : reqs } };
-        };
-        if( user.role == "trader"){
+        }else if( user.role == "trader"){
             obj={ trader:user._id }
-        };
+        }else if(user.role == "admin" ){
+            obj={ tax : 1.65 }
+        }
         return this.crudSrv.getAllDocs( 
             this.offerModel.find()
             ,query ,obj,

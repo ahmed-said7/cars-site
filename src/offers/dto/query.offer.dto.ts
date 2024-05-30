@@ -29,4 +29,9 @@ export class QueryOfferDto {
     limit?:string;
     @IsOptional()
     guarantee:string;
+    @IsOptional()
+    color:string;
+    @IsOptional()
+    isPaid: boolean;
 };
+

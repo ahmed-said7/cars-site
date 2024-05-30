@@ -25,4 +25,7 @@ export class CreateOfferDto {
     @IsOptional()
     @IsString()
     guarantee:string;
+    @IsOptional()
+    @IsString()
+    color:string;
 };

@@ -34,7 +34,7 @@ export class PaytabService {
         if( request.completed == true ){
             throw new HttpException("your request has been paid",400);
         };
-        let price = request.quantity * offer.price;
+        let price = request.quantity * offer.price + offer.tax;
         if( request.priceReq > 0 ){
             price += request.priceReq + ( request.quantity - 1 ) * 5.75;
         };

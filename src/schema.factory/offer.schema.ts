@@ -17,6 +17,8 @@ export class OfferSchema {
             type:Schema.Types.ObjectId,
             ref:Models.User
         },
+        color:String,
+        tax:{ type:Number ,default: 1.65 },
         guarantee:String,
         userAccepted : { type:Boolean , default:false } ,
         traderAccepted : { type:Boolean , default:false },
@@ -47,4 +49,7 @@ export interface OfferDoc extends Document {
     userAccepted:boolean;
     traderAccepted:boolean;
     isPaid:boolean;
+    color:string;
+    tax:number;
+    guarantee:string
 };

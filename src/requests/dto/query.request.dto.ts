@@ -27,6 +27,8 @@ export class QueryRequestDto {
     @IsOptional()
     name:string;
     @IsOptional()
+    completed:boolean;
+    @IsOptional()
     page?:string;
     @IsOptional()
     sort?:string;

@@ -4,21 +4,19 @@ import { ComparisonOptions } from "src/enums/interfaces";
 
 export class QueryOfferDto {
     @IsOptional()
-    @IsMongoId()
-    request : mongodbId;
+    request?: string;
     @IsOptional()
-    price:string|ComparisonOptions;
+    price?:string|ComparisonOptions;
     @IsOptional()
-    status:string;
+    status?:string;
     @IsOptional()
-    @IsMongoId()
-    trader:mongodbId;
+    trader?:string;
     @IsOptional()
-    userAccepted:boolean;
+    userAccepted?:boolean;
     @IsOptional()
-    userRejected:boolean;
+    userRejected?:boolean;
     @IsOptional()
-    traderAccepted:boolean;
+    traderAccepted?:boolean;
     @IsOptional()
     page?:string;
     @IsOptional()
@@ -28,10 +26,10 @@ export class QueryOfferDto {
     @IsOptional()
     limit?:string;
     @IsOptional()
-    guarantee:string;
+    guarantee?:string;
     @IsOptional()
-    color:string;
+    color?:string;
     @IsOptional()
-    isPaid: boolean;
+    isPaid?: boolean;
 };
 

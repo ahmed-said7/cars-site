@@ -106,7 +106,8 @@ export class OfferService {
             obj = { trader : user._id };
         };
         return this.crudSrv.getAllDocs(
-            this.offerModel.find() , query , { request : reqId , ... obj },
+            this.offerModel.find() 
+            , query , { request : reqId , ... obj },
             { path:"trader" , select:"name image" }
         );
     };
@@ -118,7 +119,7 @@ export class OfferService {
                     { path:"brand",model:Models.Brand } , 
                     { path:"carmodel",model:Models.CarModel } ,
                     { path:"user" , select:"name image" , model:Models.User } 
-                ] 
+                ]
             } 
             , { 
                 path:"trader" , select:"name image" 
@@ -135,8 +136,9 @@ export class OfferService {
         if( user.role == "trader"){
             obj={ trader:user._id }
         };
-        return this.crudSrv.getAllDocs(
-            this.offerModel.find() , query , obj  ,
+        return this.crudSrv.getAllDocs( 
+            this.offerModel.find()
+            ,query ,obj,
             this.populationOpts()
         );
     };

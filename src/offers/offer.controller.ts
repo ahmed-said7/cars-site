@@ -21,7 +21,7 @@ export class OfferController {
     constructor(private offerService:OfferService ){};
     @Get()
     @UseGuards(Protected,allowedToGuard)
-    @Roles(userType.admin,userType.trader,userType.user)
+    @Roles(userType.trader,userType.user)
     getOffers(
         @AuthUser() user:UserDoc,
         @Query() query:QueryOfferDto

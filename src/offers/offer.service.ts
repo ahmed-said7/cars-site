@@ -134,8 +134,6 @@ export class OfferService {
             obj={ request : { $in : reqs } };
         }else if( user.role == "trader"){
             obj={ trader:user._id }
-        }else if(user.role == "admin" ){
-            obj={ tax : 1.65 }
         }
         return this.crudSrv.getAllDocs( 
             this.offerModel.find()

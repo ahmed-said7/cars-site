@@ -27,4 +27,6 @@ export class QueryOfferDto {
     select?:string;
     @IsOptional()
     limit?:string;
+    @IsOptional()
+    guarantee:string;
 };

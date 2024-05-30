@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import {Schema,Document, Query} from "mongoose";
+import {Schema,Document } from "mongoose";
 import { Models } from "src/enums/models";
 
 @Injectable()

@@ -14,4 +14,7 @@ export class UpdateOfferDto {
     @IsOptional()
     @IsString()
     image:string;
+    @IsOptional()
+    @IsString()
+    guarantee:string;
 };

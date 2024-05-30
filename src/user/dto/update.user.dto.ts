@@ -1,4 +1,4 @@
-import { ArrayMinSize, IsArray, IsBoolean, IsEmail, IsEnum, IsMongoId, IsNotEmpty, IsOptional, IsString, MinLength } from "class-validator";
+import { ArrayMinSize, IsArray, IsBoolean, IsEmail, IsEnum, IsMobilePhone, IsMongoId, IsNotEmpty, IsOptional, IsString, MinLength } from "class-validator";
 import { tradingType } from "./trader.dto";
 import { mongodbId } from "src/chat/chat.service";
 
@@ -24,5 +24,8 @@ export class UpdateUserDto {
     @IsOptional()
     @IsBoolean()
     active:boolean;
+    @IsOptional()
+    @IsMobilePhone("ar-SA")
+    mobile:string;
 };
 

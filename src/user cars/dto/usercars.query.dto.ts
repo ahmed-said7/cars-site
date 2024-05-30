@@ -9,4 +9,12 @@ export class UserCarsQueryDto {
     select?:string;
     @IsOptional()
     limit?:string;
+    @IsOptional()
+    letters?:string;
+    @IsOptional()
+    chNumber?:string;
+    @IsOptional()
+    plateNumber?:string;
+    @IsOptional()
+    year?:string;
 };

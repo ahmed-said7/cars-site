@@ -21,18 +21,21 @@ export class OwnCarsSchema {
             type:Schema.Types.ObjectId,
             ref:Models.CarModel
         },
+        letters:String,
+        chNumber:String,
+        plateNumber:String
     },{
         timestamps:true
     });
     constructor(){
         this.schema.post("init",function(){
             if(this.image){
-                this.image=`${process.env.url}/chat/${this.image}`;
+                this.image=`${process.env.url}/car/${this.image}`;
             }
         });
         this.schema.post("save",function(){
             if(this.image){
-                this.image=`${process.env.url}/chat/${this.image}`;
+                this.image=`${process.env.url}/car/${this.image}`;
             }
         });
     };

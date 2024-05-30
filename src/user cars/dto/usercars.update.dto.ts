@@ -16,4 +16,16 @@ export class UpdateUserCarsDto {
     @Min(1990)
     @Max(new Date().getFullYear())
     year:number;
+    
+    @IsOptional()
+    @IsString()
+    letters:string;
+    
+    @IsOptional()
+    @IsString()
+    chNumber:string;
+    
+    @IsOptional()
+    @IsString()
+    plateNumber:string;
 };

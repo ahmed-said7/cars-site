@@ -17,6 +17,7 @@ export class OfferSchema {
             type:Schema.Types.ObjectId,
             ref:Models.User
         },
+        guarantee:String,
         userAccepted : { type:Boolean , default:false } ,
         traderAccepted : { type:Boolean , default:false },
         isPaid: { type:Boolean , default:false }

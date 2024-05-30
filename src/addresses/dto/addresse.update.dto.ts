@@ -3,17 +3,14 @@ import { IsMobilePhone, IsNumber, IsOptional, IsString } from "class-validator";
 export class UpdateAddresseDto {
     @IsOptional()
     @IsNumber()
-    postalCode:number;
+    code:number;
     @IsOptional()
     @IsString()
-    details:string;
+    country:string;
     @IsOptional()
     @IsString()
     city:string;
     @IsOptional()
     @IsString()
-    street:string;
-    @IsOptional()
-    @IsMobilePhone("ar-SA")
-    mobile:string;
+    quarter:string;
 };

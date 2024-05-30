@@ -1,4 +1,4 @@
-import { ArrayMinSize, IsArray, IsEmail, IsEnum, IsMongoId, IsNotEmpty, IsOptional, IsString, MinLength } from "class-validator";
+import { ArrayMinSize, IsArray, IsEmail, IsEnum, IsMobilePhone, IsMongoId, IsNotEmpty, IsOptional, IsString, MinLength } from "class-validator";
 import { mongodbId } from "src/chat/chat.service";
 import { userType } from "src/enums/user.type";
 import { tradingType } from "./trader.dto";
@@ -32,4 +32,7 @@ export class CreateUserDto {
     @ArrayMinSize(1)
     @IsMongoId({each:true})
     tradingBrand:mongodbId[];
+    @IsOptional()
+    @IsMobilePhone("ar-SA")
+    mobile:string;
 };

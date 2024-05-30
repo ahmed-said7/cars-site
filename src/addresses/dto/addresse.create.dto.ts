@@ -3,17 +3,14 @@ import { IsMobilePhone, IsNotEmpty, IsNumber, IsOptional, IsString } from "class
 export class CreateAddresseDto {
     @IsOptional()
     @IsNumber()
-    postalCode:number;
+    code:number;
     @IsOptional()
     @IsString()
-    details:string;
+    quarter:string;
     @IsNotEmpty()
     @IsString()
     city:string;
     @IsNotEmpty()
     @IsString()
-    street:string;
-    @IsOptional()
-    @IsMobilePhone("ar-SA")
-    mobile:string;
+    country:string;
 };

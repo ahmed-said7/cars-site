@@ -22,4 +22,7 @@ export class CreateOfferDto {
     @IsNotEmpty()
     @IsEnum(offerType)
     status: offerType;
+    @IsOptional()
+    @IsString()
+    guarantee:string;
 };

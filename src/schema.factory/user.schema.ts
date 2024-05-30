@@ -36,6 +36,7 @@ export class UserSchema {
             type:String,
             enum:["new","used"]
         },
+        mobile:String,
         emailVertified:{type:Boolean,default:false},
         emailVerifiedExpired:Date,
         emailVerifiedCode:String,
@@ -49,11 +50,10 @@ export class UserSchema {
         active:Boolean,
         allowTrading:{type:Boolean,default:false},
         addresses:[{
-            postalCode:Number,
-            details:String,
+            code:Number,
+            country:String,
             city:String,
-            street:String,
-            mobile:String,
+            quarter:String
         }]
         },{
             timestamps:true

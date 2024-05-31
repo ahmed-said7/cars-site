@@ -20,10 +20,10 @@ export class CreateUserDto {
     @IsString()
     @MinLength(6)
     password: string;
-    @IsNotEmpty()
-    @IsString()
-    @MinLength(6)
-    passwordConfirm: string;
+    // @IsNotEmpty()
+    // @IsString()
+    // @MinLength(6)
+    // passwordConfirm: string;
     @IsOptional()
     @IsEnum(tradingType)
     tradingType: string;

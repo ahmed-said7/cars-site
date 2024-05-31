@@ -43,9 +43,9 @@ export class UserService {
     ) {};
     async signup( body : CreateUserDto ){
         let user=await this.validateEmail(body.email);
-        if( body.password !== body.passwordConfirm ){
-            throw new HttpException("password does not match password confirm",400);
-        };
+        // if( body.password !== body.passwordConfirm ){
+        //     throw new HttpException("password does not match password confirm",400);
+        // };
         if( body.role == userType.trader && !body.tradingType ){
             body.tradingType=tradingType.new;
         } else if ( body.role != userType.trader ){
@@ -81,9 +81,9 @@ export class UserService {
     };
     async createUserByAdmin( body:CreateUserDto ){
         let user=await this.validateEmail(body.email);
-        if( body.password !== body.passwordConfirm ){
-            throw new HttpException("password does not match password confirm",400);
-        };
+        // if( body.password !== body.passwordConfirm ){
+        //     throw new HttpException("password does not match password confirm",400);
+        // };
 
         if( body.role == userType.trader && !body.tradingType ){
             body.tradingType=tradingType.new;

@@ -1,3 +1,4 @@
+import { Transform } from "class-transformer";
 import { IsEnum, IsMongoId, IsNegative, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 import { mongodbId } from "src/chat/chat.service"
 enum offerType {

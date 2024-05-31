@@ -8,7 +8,7 @@ async function bootstrap() {
   app.enableCors();
   app.use(bodyParser.urlencoded({extended:false}))
   app.useGlobalPipes(new ValidationPipe(
-    {whitelist:true,transform:true }
+    {whitelist:true,transform:true ,transformOptions:{enableImplicitConversion:true}}
   ));
   app.useStaticAssets("src/uploads");
   await app.listen(6000);

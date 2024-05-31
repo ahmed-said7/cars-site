@@ -1,6 +1,7 @@
 import { 
     Body, Controller, Delete, Get, Param, 
-    Patch, Post, Query, UseGuards } from "@nestjs/common";
+    Patch, Post, Query, UseGuards, 
+    UseInterceptors} from "@nestjs/common";
 import { allowedToGuard } from "src/guards/allowed.user";
 import { Protected } from "src/guards/protect.user";
 import { userType } from "src/enums/user.type";
@@ -13,6 +14,8 @@ import { CreateOfferDto } from "./dto/create.offer.dto";
 import { OfferService } from "./offer.service";
 import { UpdateOfferDto } from "./dto/update.offer.dto";
 import { QueryOfferDto } from "./dto/query.offer.dto";
+import { FileInterceptorImage } from "src/interceptor/file.interceptor";
+import { FileInterceptor } from "@nestjs/platform-express";
 
 
 
@@ -31,6 +34,7 @@ export class OfferController {
     @Post()
     @UseGuards(Protected,allowedToGuard)
     @Roles(userType.trader)
+    @UseInterceptors(FileInterceptor("image"),FileInterceptorImage)
     createOffer(
         @Body() body:CreateOfferDto,
         @AuthUser() user:UserDoc
@@ -58,6 +62,7 @@ export class OfferController {
     @Patch(":offerId")
     @UseGuards(Protected,allowedToGuard)
     @Roles(userType.trader)
+    @UseInterceptors(FileInterceptor("image"),FileInterceptorImage)
     updateOffer(
         @Body() body:UpdateOfferDto,
         @Param("offerId",ParseMongoId) offerId:mongodbId,

@@ -88,7 +88,8 @@ export class PaytabService {
             },
             offer:offer._id,
             request:request._id,
-            tranRef:data.tran_ref
+            tranRef:data.tran_ref,
+            discount:offer.discount
         });
         console.log(order);
     };

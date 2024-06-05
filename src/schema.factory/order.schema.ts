@@ -32,7 +32,8 @@ export class OrderSchema {
             city:String,
             street:String,
             mobile:String
-        }
+        },
+        discount:Number
     },{
         timestamps:true
     });
@@ -49,6 +50,7 @@ export interface OrderDoc extends Document {
     delivered:boolean;
     deliveredAt:Date;
     tranRef:string;
+    discount:number;
     address:{
         postalCode:number,
         details:string,

@@ -8,6 +8,7 @@ import { UserSchema } from "src/schema.factory/user.schema";
 import { OfferSchema } from "src/schema.factory/offer.schema";
 import { OfferService } from "./offer.service";
 import { OfferController } from "./offer.controller";
+import { CouponSchema } from "src/schema.factory/coupon.schema";
 
 
 
@@ -30,6 +31,14 @@ import { OfferController } from "./offer.controller";
                 name:Models.User,
                 useFactory:function(userSchema:UserSchema){
                     return userSchema.schema;
+                }
+            },
+            {
+                imports:[SchemaFactoryModule],
+                inject:[CouponSchema],
+                name:Models.Coupon,
+                useFactory:function(couponSchema:CouponSchema){
+                    return couponSchema.schema;
                 }
             },
             {

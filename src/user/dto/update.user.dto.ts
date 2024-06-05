@@ -1,6 +1,7 @@
 import { ArrayMinSize, IsArray, IsBoolean, IsEmail, IsEnum, IsMobilePhone, IsMongoId, IsNotEmpty, IsOptional, IsString, MinLength } from "class-validator";
 import { tradingType } from "./trader.dto";
 import { mongodbId } from "src/chat/chat.service";
+import { userType } from "src/enums/user.type";
 
 export class UpdateUserDto {
     @IsOptional()
@@ -16,6 +17,9 @@ export class UpdateUserDto {
     @IsOptional()
     @IsEnum(tradingType)
     tradingType: string;
+    @IsOptional()
+    @IsEnum(userType)
+    role: string;
     @IsOptional()
     @IsArray()
     @ArrayMinSize(1)

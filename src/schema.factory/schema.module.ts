@@ -11,6 +11,7 @@ import { SpareSchema } from "./spare.schema";
 import { RequestSchema } from "./request.schema";
 import { OfferSchema } from "./offer.schema";
 import { OrderSchema } from "./order.schema";
+import { CouponSchema } from "./coupon.schema";
 
 
 
@@ -22,12 +23,12 @@ import { OrderSchema } from "./order.schema";
         OfferSchema,
         UserSchema,ChatSchema,MessageSchema,CarBrandSchema,
         CarModelSchema,OwnCarsSchema,ReviewSchema,SpareSchema,RequestSchema,
-        OrderSchema
+        OrderSchema,CouponSchema
     ],
     exports:[
         UserSchema,ChatSchema,MessageSchema,CarBrandSchema,CarModelSchema,
         OwnCarsSchema,ReviewSchema,SpareSchema,RequestSchema,
-        OfferSchema,OrderSchema
+        OfferSchema,OrderSchema,CouponSchema
     ]
 })
 

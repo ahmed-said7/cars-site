@@ -41,6 +41,15 @@ export class OfferController {
     ){
         return this.offerService.createOffer(body,user);
     };
+    @Patch("/:offerId/coupon/:name")
+    @UseGuards(Protected)
+    applyCoupons(
+        @Param("offerId",ParseMongoId) offerId:mongodbId,
+        @Query("name") name:string,
+        @AuthUser() user:UserDoc
+    ){
+        return this.offerService.applyCoupon(name,offerId,user);
+    };
     @Patch("trader-accept/:offerId")
     @UseGuards(Protected,allowedToGuard)
     @Roles(userType.trader)

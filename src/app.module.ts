@@ -20,6 +20,7 @@ import { RequestModule } from './requests/request.module.dto';
 import { OfferModule } from './offers/offer.module';
 import { PaytabModule } from './payment gateway/paytab.module';
 import { OrderModule } from './order/order.module';
+import { CouponModule } from './coupon/coupon.module';
 
 
 @Module({
@@ -48,7 +49,7 @@ import { OrderModule } from './order/order.module';
     ReviewModule,
     SpareModule,
     RequestModule
-    ,OfferModule,PaytabModule
+    ,OfferModule,PaytabModule,CouponModule
   ],
   controllers: [],
   providers: [{provide:APP_FILTER,useClass:catchExceptionsFilter}]

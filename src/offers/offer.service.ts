@@ -11,6 +11,8 @@ import { CrudService } from "src/filter/crud.service";
 import { QueryOfferDto } from "./dto/query.offer.dto";
 import { UpdateOfferDto } from "./dto/update.offer.dto";
 import { OnEvent } from "@nestjs/event-emitter";
+import { CouponDoc } from "src/schema.factory/coupon.schema";
+import { max } from "class-validator";
 
 
 
@@ -19,6 +21,7 @@ export class OfferService {
     constructor(
         @InjectModel(Models.Request) private reqModel:Model<RequestDoc>,
         @InjectModel(Models.Offer) private offerModel:Model<OfferDoc>,
+        @InjectModel(Models.Coupon) private couponModel:Model<CouponDoc>,
         private crudSrv:CrudService<OfferDoc,QueryOfferDto>
     ){};
     async createOffer(body:CreateOfferDto,user:UserDoc){
@@ -165,6 +168,36 @@ export class OfferService {
             throw new HttpException("can not access offer,offer was paid by user",400);
         };
         return offer;
+    };
+    async applyCoupon(name:string,offerId:mongodbId,user:UserDoc){
+        const coupon=await this.couponModel.findOne({ name });
+        if(! coupon ){
+            throw new HttpException("Coupon not found",400);
+        };
+        const offer=await this.offerModel.findOne(
+            { _id:offerId  }
+        );
+        if(!offer){
+            throw new HttpException("No offer found",400);
+        };
+        const request= await this.reqModel
+            .findOne({ _id:offer.request , user:user._id });
+        if( ! request ){
+            throw new HttpException("you are not request owner",400);
+        };
+        if( user.coupons.includes(coupon._id) ){
+            throw new HttpException("you have already use coupon",400);
+        };
+        const discount=offer.price * Math.floor( coupon.discount / 100 );
+        const price=offer.price - discount;
+        if( discount > coupon.max ){
+            throw new HttpException("Invalid discount",400);
+        };
+        offer.price=price;
+        user.coupons.push(coupon._id);
+        await user.save();
+        await offer.save();
+        return { offer };
     };
     @OnEvent("request.deleteOne")
     private async onRequestDeleted(request:RequestDoc){

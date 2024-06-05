@@ -10,5 +10,6 @@ export enum Models {
     Spare="spare",
     Request="request",
     Order="order",
-    Offer="offer"
+    Offer="offer",
+    Coupon="coupon"
 };

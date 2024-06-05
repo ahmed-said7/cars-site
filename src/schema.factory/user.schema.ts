@@ -43,7 +43,8 @@ export class UserSchema {
         passwordResetCode:String,
         passwordResetCodeExpires:Date,
         passwordResetCodeVertified:Boolean,
-        tradingBrand:[{ type:Schema.Types.ObjectId,ref:Models.Brand }],
+        tradingBrand:[{ type:Schema.Types.ObjectId , ref:Models.Brand }],
+        coupons:[{ type:Schema.Types.ObjectId , ref:Models.Coupon }],
         ratingQuantity:{type:Number,default:0},
         averageRating:{type:Number,default:0},
         passwordChangedAt:Date,
@@ -108,4 +109,5 @@ export interface UserDoc extends Document {
     tradingBrand:BrandDoc[];
     allowTrading:boolean;
     active:boolean;
+    coupons:mongodbId[];
 };

@@ -188,12 +188,15 @@ export class OfferService {
         if( user.coupons.includes(coupon._id) ){
             throw new HttpException("you have already use coupon",400);
         };
-        const discount=offer.price * Math.floor( coupon.discount / 100 );
-        const price=offer.price - discount;
+        let price = request.quantity * offer.price + offer.tax;
+        if( request.priceReq > 0 ){
+            price += request.priceReq + ( request.quantity - 1 ) * 5.75;
+        };
+        const discount= price * Math.floor( coupon.discount / 100 );
         if( discount > coupon.max ){
             throw new HttpException("Invalid discount",400);
         };
-        offer.price=price;
+        offer.discount=coupon.discount;
         user.coupons.push(coupon._id);
         await user.save();
         await offer.save();

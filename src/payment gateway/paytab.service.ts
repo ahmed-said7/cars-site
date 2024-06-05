@@ -38,6 +38,7 @@ export class PaytabService {
         if( request.priceReq > 0 ){
             price += request.priceReq + ( request.quantity - 1 ) * 5.75;
         };
+        price=price - price * Math.floor( offer.discount / 100  )
         const meta={ price ,  cartId:offer._id  };
         const urls={ 
             callback: process.env.callback , 

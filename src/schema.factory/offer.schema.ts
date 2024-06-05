@@ -22,7 +22,8 @@ export class OfferSchema {
         guarantee:String,
         userAccepted : { type:Boolean , default:false } ,
         traderAccepted : { type:Boolean , default:false },
-        isPaid: { type:Boolean , default:false }
+        isPaid: { type:Boolean , default:false },
+        discount:{ type:Number,default:0 }
     },{
         timestamps:true
     });
@@ -51,5 +52,6 @@ export interface OfferDoc extends Document {
     isPaid:boolean;
     color:string;
     tax:number;
-    guarantee:string
+    guarantee:string;
+    discount:number;
 };

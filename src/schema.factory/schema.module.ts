@@ -12,6 +12,8 @@ import { RequestSchema } from "./request.schema";
 import { OfferSchema } from "./offer.schema";
 import { OrderSchema } from "./order.schema";
 import { CouponSchema } from "./coupon.schema";
+import { QuestionSchema } from "./question.schema";
+import { ContactSchema } from "./contact.schema";
 
 
 
@@ -23,12 +25,13 @@ import { CouponSchema } from "./coupon.schema";
         OfferSchema,
         UserSchema,ChatSchema,MessageSchema,CarBrandSchema,
         CarModelSchema,OwnCarsSchema,ReviewSchema,SpareSchema,RequestSchema,
-        OrderSchema,CouponSchema
+        OrderSchema,CouponSchema,QuestionSchema,ContactSchema
     ],
     exports:[
         UserSchema,ChatSchema,MessageSchema,CarBrandSchema,CarModelSchema,
         OwnCarsSchema,ReviewSchema,SpareSchema,RequestSchema,
-        OfferSchema,OrderSchema,CouponSchema
+        OfferSchema,OrderSchema,CouponSchema,QuestionSchema,
+        ContactSchema
     ]
 })
 

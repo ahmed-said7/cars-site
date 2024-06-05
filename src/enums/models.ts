@@ -11,5 +11,7 @@ export enum Models {
     Request="request",
     Order="order",
     Offer="offer",
-    Coupon="coupon"
+    Coupon="coupon",
+    Question="question",
+    Contact="contact"
 };
